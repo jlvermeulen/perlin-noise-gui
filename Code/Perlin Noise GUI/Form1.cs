@@ -6,6 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PerlinNoise;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace Perlin_Noise_GUI
 {
@@ -14,6 +18,11 @@ namespace Perlin_Noise_GUI
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = PerlinNoiseGenerator.GetImage();
         }
     }
 }
