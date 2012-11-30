@@ -1,29 +1,174 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+
+public enum RangeHandling { Absolute, Clamp, InverseAbsolute, Shift };
 
 namespace PerlinNoise
 {
     public static class PerlinNoiseGenerator
     {
-        public static Bitmap GetImage()
+        public static Bitmap GetImage(PerlinNoiseSettings settings)
         {
             Random r = new Random();
-            Bitmap bmp = new Bitmap(300, 300);
-            for (int i = 0; i < 300; i++)
-                for (int j = 0; j < 300; j++)
-                    bmp.SetPixel(i, j, System.Drawing.Color.FromArgb(r.Next(256), r.Next(256), r.Next(256)));
+            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution);
+            Color[] texels = Generate(settings.Seed, settings.Resolution, (int)Math.Pow(2, settings.Offset + 1), settings.Intensity, settings.RangeHandling);
+            for (int i = 0; i < settings.Resolution; i++)
+                for (int j = 0; j < settings.Resolution; j++)
+                    bmp.SetPixel(i, j, texels[i * settings.Resolution + j]);
             return bmp;
+        }
+
+        private static Color[] Generate(int seed, int size, int arraySize, float intensity, RangeHandling rangeHandling)
+        {
+            Random random;
+            if (seed != int.MinValue)
+                random = new Random(seed);
+            else
+                random = new Random();
+            float ratio = (float)size / arraySize;
+            if (rangeHandling == RangeHandling.Shift)
+                intensity *= 0.25f;
+            else if (rangeHandling == RangeHandling.InverseAbsolute)
+                intensity *= 5;
+
+            Color[] texels = new Color[size * size];
+            Vector2[] vectors = new Vector2[arraySize];
+            int[] hashLookup = new int[arraySize];
+
+            for (int i = 0; i < arraySize; i++)
+            {
+                vectors[i].X = 2 * (float)random.NextDouble() - 1;
+                vectors[i].Y = 2 * (float)random.NextDouble() - 1;
+                if (vectors[i].Length() < 1)
+                    vectors[i].Normalize();
+                else if (i > 0)
+                    i--;
+                else
+                    i = 0;
+                hashLookup[i] = i;
+            }
+
+            Scramble(hashLookup, random);
+
+            int[,] vectorIndices = new int[arraySize + 1, arraySize + 1];
+            for (int x = 0; x < arraySize + 1; x++)
+                for (int y = 0; y < arraySize + 1; y++)
+                    vectorIndices[x, y] = hashLookup[(x + hashLookup[y % arraySize]) % arraySize];
+
+            for (float x = 0; x < arraySize; x += 1.0f / ratio)
+                for (float y = 0; y < arraySize; y += 1.0f / ratio)
+                {
+                    float value = 0;
+
+                    int fx = (int)Math.Floor(x);
+                    int fy = (int)Math.Floor(y);
+                    for (int i = fx; i <= fx + 1; i++)
+                        for (int j = fy; j <= fy + 1; j++)
+                            value += Omega(x - i) * Omega(y - j) * Vector2.Dot(vectors[vectorIndices[i, j]], new Vector2(x - i, y - j));
+
+                    int tx = (int)Math.Round((x * ratio));
+                    int ty = (int)Math.Round((y * ratio));
+
+                    if (rangeHandling == RangeHandling.Absolute)
+                        texels[tx + ty * size] = new Vector3(Math.Abs(value) * intensity, Math.Abs(value) * intensity, Math.Abs(value) * intensity).ToColor();
+                    else if (rangeHandling == RangeHandling.Clamp)
+                    {
+                        value *= intensity;
+                        texels[tx + ty * size] = new Vector3(value, value, value).ToColor();
+                    }
+                    else if (rangeHandling == RangeHandling.InverseAbsolute)
+                        texels[tx + ty * size] = new Vector3(1f - Math.Abs(value) * intensity, 1f - Math.Abs(value) * intensity, 1f - Math.Abs(value) * intensity).ToColor();
+                    else if (rangeHandling == RangeHandling.Shift)
+                        texels[tx + ty * size] = new Vector3((value + 1) * intensity, (value + 1) * intensity, (value + 1) * intensity).ToColor();
+                }
+
+            return texels;
+        }
+
+        private static float Omega(float u)
+        {
+            u = Math.Abs(u);
+            if (u < 1)
+                u = 2 * (float)Math.Pow(u, 3) - 3 * (float)Math.Pow(u, 2) + 1;
+            else
+                u = 0;
+
+            return u;
+        }
+
+        private static void Scramble(int[] array, Random r)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                int j = r.Next(array.Length);
+                int t = array[i];
+                array[i] = array[j];
+                array[j] = t;
+            }
         }
     }
 
     public class PerlinNoiseSettings
     {
-        public float Intensity { get; set; }
-        public int Offset { get; set; }
-        public int Levels { get; set; }
+        public int Seed;
+        public int Resolution;
+        public float Intensity;
+        public int Offset;
+        public int Levels;
+        public RangeHandling RangeHandling;
+        public int Threads;
+    }
+
+    struct Vector2
+    {
+        public float X, Y;
+
+        public Vector2(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public static float Dot(Vector2 a, Vector2 b)
+        {
+            return a.X * b.X + a.Y * b.Y;
+        }
+
+        public float Length()
+        {
+            return (float)Math.Sqrt(X * X + Y * Y);
+        }
+
+        public void Normalize()
+        {
+            float length = Length();
+            X /= length;
+            Y /= length;
+        }
+    }
+
+    struct Vector3
+    {
+        public float X, Y, Z;
+
+        public Vector3(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public Color ToColor()
+        {
+            float x, y, z;
+            x = X < 0 ? 0 : X > 1 ? 1 : X;
+            y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
+            z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
+            x *= 255;
+            y *= 255;
+            z *= 255;
+            return Color.FromArgb((int)Math.Round(x, 0, MidpointRounding.AwayFromZero), (int)Math.Round(y, 0, MidpointRounding.AwayFromZero), (int)Math.Round(z, 0, MidpointRounding.AwayFromZero));
+        }
     }
 }
 /*

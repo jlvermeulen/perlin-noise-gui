@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perlin Noise GUI", "Perlin Noise GUI\Perlin Noise GUI.csproj", "{45980B58-B4DB-4814-8141-6E5D800685A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "Perlin Noise GUI\GUI.csproj", "{45980B58-B4DB-4814-8141-6E5D800685A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Perlin Noise", "Perlin Noise\Perlin Noise.csproj", "{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}"
 EndProject
