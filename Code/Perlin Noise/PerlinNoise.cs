@@ -23,6 +23,17 @@ namespace PerlinNoise
             return bmp;
         }
 
+        public static Bitmap GetImage2(PerlinNoiseSettings settings)
+        {
+            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings);
+            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution);
+            byte[] colours = generator.Generate();
+            for (int i = 0; i < settings.Resolution; i++)
+                for (int j = 0; j < settings.Resolution; j++)
+                    bmp.SetPixel(i, j, Color.FromArgb(colours[(i + j * settings.Resolution) * 3], colours[(i + j * settings.Resolution) * 3 + 1], colours[(i + j * settings.Resolution) * 3 + 2]));
+            return bmp;
+        }
+
         PerlinNoiseSettings settings;
         byte[] texels;
         Vector2[] vectors;
@@ -45,10 +56,6 @@ namespace PerlinNoise
             else
                 random = new Random();
             float ratio = (float)settings.Resolution / arraySize;
-            if (settings.RangeHandling == RangeHandling.Shift)
-                settings.Intensity *= 0.25f;
-            else if (settings.RangeHandling == RangeHandling.InverseAbsolute)
-                settings.Intensity *= 5;
 
             texels = new byte[settings.Resolution * settings.Resolution * 3];
             vectors = new Vector2[arraySize];
@@ -101,17 +108,21 @@ namespace PerlinNoise
                     int tx = (int)Math.Round((x * tParams.Ratio));
                     int ty = (int)Math.Round((y * tParams.Ratio));
                     int pos = (tx + ty * settings.Resolution) * 3;
+
                     if (settings.RangeHandling == RangeHandling.Absolute)
-                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)(Math.Abs(value) * settings.Intensity * 255);
+                        value = Math.Abs(value) * settings.Intensity;
                     else if (settings.RangeHandling == RangeHandling.Clamp)
-                    {
-                        value *= settings.Intensity;
-                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)(value * 255);
-                    }
+                        value = value * settings.Intensity;
                     else if (settings.RangeHandling == RangeHandling.InverseAbsolute)
-                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)((1f - Math.Abs(value) * settings.Intensity) * 255);
+                        value = 1f - Math.Abs(value) * settings.Intensity;
                     else if (settings.RangeHandling == RangeHandling.Shift)
-                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)((value + 1) * settings.Intensity * 255);
+                        value = (value + 1) / 2 * settings.Intensity;
+
+                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow);
+
+                    texels[pos] = col.B;
+                    texels[pos + 1] = col.G;
+                    texels[pos + 2] = col.R;
                 }
         }
 
@@ -136,6 +147,11 @@ namespace PerlinNoise
                 array[j] = t;
             }
         }
+
+        private static byte Mul(byte left, byte right)
+        {
+            return (byte)(left * ((float)right / 255));
+        }
     }
 
     public class PerlinNoiseSettings
@@ -147,6 +163,8 @@ namespace PerlinNoise
         public int Levels;
         public RangeHandling RangeHandling;
         public int Threads;
+        public Color Shadow;
+        public Color Highlight;
     }
 
     struct Vector2
@@ -174,6 +192,35 @@ namespace PerlinNoise
             float length = Length();
             X /= length;
             Y /= length;
+        }
+    }
+
+    struct Vector3
+    {
+        public float X, Y, Z;
+
+        public Vector3(float val)
+        {
+            X = Y = Z = val;
+        }
+
+        public Vector3(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public Color ToColor(Color highlight, Color shadow)
+        {
+            float x, y, z;
+            x = X < 0 ? 0 : X > 1 ? 1 : X;
+            y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
+            z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
+            x = X * highlight.R + (1 - x) * shadow.R;
+            y = Y * highlight.G + (1 - y) * shadow.G;
+            z = Z * highlight.B + (1 - z) * shadow.B;
+            return Color.FromArgb((byte)x, (byte)y, (byte)z);
         }
     }
 
