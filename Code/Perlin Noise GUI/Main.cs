@@ -15,7 +15,7 @@ namespace GUI
         private void button1_Click(object sender, EventArgs e)
         {
             PerlinNoiseSettings settings = new PerlinNoiseSettings()
-            { Intensity = 1.0f, Levels = 1, Offset = 0, RangeHandling = RangeHandling.Absolute, Resolution = 512, Seed = int.MinValue, Threads = 1 };
+            { Intensity = 1.0f, Levels = 1, Offset = 5, RangeHandling = RangeHandling.Absolute, Resolution = 8192, Seed = 0, Threads = 8 };
             DateTime start = DateTime.Now;
             Image full = PerlinNoiseGenerator.GetImage(settings);
             DateTime end = DateTime.Now;

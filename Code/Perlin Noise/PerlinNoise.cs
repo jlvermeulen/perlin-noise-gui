@@ -1,39 +1,58 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 public enum RangeHandling { Absolute, Clamp, InverseAbsolute, Shift };
 
 namespace PerlinNoise
 {
-    public static class PerlinNoiseGenerator
+    public class PerlinNoiseGenerator
     {
         public static Bitmap GetImage(PerlinNoiseSettings settings)
         {
-            Random r = new Random();
-            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution);
-            Color[] texels = Generate(settings.Seed, settings.Resolution, (int)Math.Pow(2, settings.Offset + 1), settings.Intensity, settings.RangeHandling);
-            for (int i = 0; i < settings.Resolution; i++)
-                for (int j = 0; j < settings.Resolution; j++)
-                    bmp.SetPixel(i, j, texels[i * settings.Resolution + j]);
+            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings);
+            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution, PixelFormat.Format24bppRgb);
+            byte[] colours = generator.Generate();
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+            IntPtr ptr = bmpData.Scan0;
+            Marshal.Copy(colours, 0, ptr, colours.Length);
+            bmp.UnlockBits(bmpData);
             return bmp;
         }
 
-        private static Color[] Generate(int seed, int size, int arraySize, float intensity, RangeHandling rangeHandling)
+        PerlinNoiseSettings settings;
+        byte[] texels;
+        Vector2[] vectors;
+        int[] hashLookup;
+        int[,] vectorIndices;
+        int arraySize;
+
+        private PerlinNoiseGenerator(PerlinNoiseSettings settings)
         {
+            this.settings = settings;
+            this.arraySize = (int)Math.Pow(2, settings.Offset + 1);
+        }
+
+        private byte[] Generate()
+        {
+            Thread[] threads = new Thread[settings.Threads];
             Random random;
-            if (seed != int.MinValue)
-                random = new Random(seed);
+            if (settings.Seed != int.MinValue)
+                random = new Random(settings.Seed);
             else
                 random = new Random();
-            float ratio = (float)size / arraySize;
-            if (rangeHandling == RangeHandling.Shift)
-                intensity *= 0.25f;
-            else if (rangeHandling == RangeHandling.InverseAbsolute)
-                intensity *= 5;
+            float ratio = (float)settings.Resolution / arraySize;
+            if (settings.RangeHandling == RangeHandling.Shift)
+                settings.Intensity *= 0.25f;
+            else if (settings.RangeHandling == RangeHandling.InverseAbsolute)
+                settings.Intensity *= 5;
 
-            Color[] texels = new Color[size * size];
-            Vector2[] vectors = new Vector2[arraySize];
-            int[] hashLookup = new int[arraySize];
+            texels = new byte[settings.Resolution * settings.Resolution * 3];
+            vectors = new Vector2[arraySize];
+            hashLookup = new int[arraySize];
 
             for (int i = 0; i < arraySize; i++)
             {
@@ -50,13 +69,26 @@ namespace PerlinNoise
 
             Scramble(hashLookup, random);
 
-            int[,] vectorIndices = new int[arraySize + 1, arraySize + 1];
+            vectorIndices = new int[arraySize + 1, arraySize + 1];
             for (int x = 0; x < arraySize + 1; x++)
                 for (int y = 0; y < arraySize + 1; y++)
                     vectorIndices[x, y] = hashLookup[(x + hashLookup[y % arraySize]) % arraySize];
 
-            for (float x = 0; x < arraySize; x += 1.0f / ratio)
-                for (float y = 0; y < arraySize; y += 1.0f / ratio)
+            for (int i = 0; i < settings.Threads; i++)
+                threads[i] = new Thread(new ParameterizedThreadStart(FillTexels));
+            for (int i = 0; i < settings.Threads; i++)
+                threads[i].Start(new ThreadParams(ratio, i / ratio, settings.Threads));
+            for (int i = 0; i < settings.Threads; i++)
+                threads[i].Join();
+
+            return texels;
+        }
+
+        private void FillTexels(object data)
+        {
+            ThreadParams tParams = (ThreadParams)data;
+            for (float x = tParams.Start; x < arraySize; x += tParams.Step / tParams.Ratio)
+                for (float y = 0; y < arraySize; y += 1.0f / tParams.Ratio)
                 {
                     float value = 0;
 
@@ -66,23 +98,21 @@ namespace PerlinNoise
                         for (int j = fy; j <= fy + 1; j++)
                             value += Omega(x - i) * Omega(y - j) * Vector2.Dot(vectors[vectorIndices[i, j]], new Vector2(x - i, y - j));
 
-                    int tx = (int)Math.Round((x * ratio));
-                    int ty = (int)Math.Round((y * ratio));
-
-                    if (rangeHandling == RangeHandling.Absolute)
-                        texels[tx + ty * size] = new Vector3(Math.Abs(value) * intensity, Math.Abs(value) * intensity, Math.Abs(value) * intensity).ToColor();
-                    else if (rangeHandling == RangeHandling.Clamp)
+                    int tx = (int)Math.Round((x * tParams.Ratio));
+                    int ty = (int)Math.Round((y * tParams.Ratio));
+                    int pos = (tx + ty * settings.Resolution) * 3;
+                    if (settings.RangeHandling == RangeHandling.Absolute)
+                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)(Math.Abs(value) * settings.Intensity * 255);
+                    else if (settings.RangeHandling == RangeHandling.Clamp)
                     {
-                        value *= intensity;
-                        texels[tx + ty * size] = new Vector3(value, value, value).ToColor();
+                        value *= settings.Intensity;
+                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)(value * 255);
                     }
-                    else if (rangeHandling == RangeHandling.InverseAbsolute)
-                        texels[tx + ty * size] = new Vector3(1f - Math.Abs(value) * intensity, 1f - Math.Abs(value) * intensity, 1f - Math.Abs(value) * intensity).ToColor();
-                    else if (rangeHandling == RangeHandling.Shift)
-                        texels[tx + ty * size] = new Vector3((value + 1) * intensity, (value + 1) * intensity, (value + 1) * intensity).ToColor();
+                    else if (settings.RangeHandling == RangeHandling.InverseAbsolute)
+                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)((1f - Math.Abs(value) * settings.Intensity) * 255);
+                    else if (settings.RangeHandling == RangeHandling.Shift)
+                        texels[pos] = texels[pos + 1] = texels[pos + 2] = (byte)((value + 1) * settings.Intensity * 255);
                 }
-
-            return texels;
         }
 
         private static float Omega(float u)
@@ -147,27 +177,17 @@ namespace PerlinNoise
         }
     }
 
-    struct Vector3
+    class ThreadParams
     {
-        public float X, Y, Z;
+        public float Ratio;
+        public float Start;
+        public int Step;
 
-        public Vector3(float x, float y, float z)
+        public ThreadParams(float ratio, float start, int step)
         {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        public Color ToColor()
-        {
-            float x, y, z;
-            x = X < 0 ? 0 : X > 1 ? 1 : X;
-            y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
-            z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
-            x *= 255;
-            y *= 255;
-            z *= 255;
-            return Color.FromArgb((int)Math.Round(x, 0, MidpointRounding.AwayFromZero), (int)Math.Round(y, 0, MidpointRounding.AwayFromZero), (int)Math.Round(z, 0, MidpointRounding.AwayFromZero));
+            Ratio = ratio;
+            Start = start;
+            Step = step;
         }
     }
 }
