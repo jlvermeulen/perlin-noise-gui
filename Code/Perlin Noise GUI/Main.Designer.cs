@@ -53,6 +53,7 @@
             this.highlightGreen = new System.Windows.Forms.NumericUpDown();
             this.highlightBlue = new System.Windows.Forms.NumericUpDown();
             this.highlightRed = new System.Windows.Forms.NumericUpDown();
+            this.wrap = new System.Windows.Forms.CheckBox();
             this.resolution = new GUI.ResolutionUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
@@ -90,7 +91,7 @@
             // seedLabel
             // 
             this.seedLabel.AutoSize = true;
-            this.seedLabel.Location = new System.Drawing.Point(12, 360);
+            this.seedLabel.Location = new System.Drawing.Point(12, 501);
             this.seedLabel.Name = "seedLabel";
             this.seedLabel.Size = new System.Drawing.Size(32, 13);
             this.seedLabel.TabIndex = 4;
@@ -99,7 +100,7 @@
             // intensityLabel
             // 
             this.intensityLabel.AutoSize = true;
-            this.intensityLabel.Location = new System.Drawing.Point(12, 67);
+            this.intensityLabel.Location = new System.Drawing.Point(12, 41);
             this.intensityLabel.Name = "intensityLabel";
             this.intensityLabel.Size = new System.Drawing.Size(46, 13);
             this.intensityLabel.TabIndex = 6;
@@ -108,7 +109,7 @@
             // levelsLabel
             // 
             this.levelsLabel.AutoSize = true;
-            this.levelsLabel.Location = new System.Drawing.Point(12, 93);
+            this.levelsLabel.Location = new System.Drawing.Point(12, 67);
             this.levelsLabel.Name = "levelsLabel";
             this.levelsLabel.Size = new System.Drawing.Size(38, 13);
             this.levelsLabel.TabIndex = 8;
@@ -117,7 +118,7 @@
             // shadowLabel
             // 
             this.shadowLabel.AutoSize = true;
-            this.shadowLabel.Location = new System.Drawing.Point(12, 224);
+            this.shadowLabel.Location = new System.Drawing.Point(12, 191);
             this.shadowLabel.Name = "shadowLabel";
             this.shadowLabel.Size = new System.Drawing.Size(46, 13);
             this.shadowLabel.TabIndex = 10;
@@ -126,7 +127,7 @@
             // highlightLabel
             // 
             this.highlightLabel.AutoSize = true;
-            this.highlightLabel.Location = new System.Drawing.Point(12, 250);
+            this.highlightLabel.Location = new System.Drawing.Point(12, 211);
             this.highlightLabel.Name = "highlightLabel";
             this.highlightLabel.Size = new System.Drawing.Size(48, 13);
             this.highlightLabel.TabIndex = 12;
@@ -135,7 +136,7 @@
             // offsetLabel
             // 
             this.offsetLabel.AutoSize = true;
-            this.offsetLabel.Location = new System.Drawing.Point(12, 119);
+            this.offsetLabel.Location = new System.Drawing.Point(12, 93);
             this.offsetLabel.Name = "offsetLabel";
             this.offsetLabel.Size = new System.Drawing.Size(35, 13);
             this.offsetLabel.TabIndex = 14;
@@ -144,7 +145,7 @@
             // rangeHandlingLabel
             // 
             this.rangeHandlingLabel.AutoSize = true;
-            this.rangeHandlingLabel.Location = new System.Drawing.Point(12, 146);
+            this.rangeHandlingLabel.Location = new System.Drawing.Point(12, 120);
             this.rangeHandlingLabel.Name = "rangeHandlingLabel";
             this.rangeHandlingLabel.Size = new System.Drawing.Size(84, 13);
             this.rangeHandlingLabel.TabIndex = 16;
@@ -153,7 +154,7 @@
             // threadsLabel
             // 
             this.threadsLabel.AutoSize = true;
-            this.threadsLabel.Location = new System.Drawing.Point(12, 333);
+            this.threadsLabel.Location = new System.Drawing.Point(12, 475);
             this.threadsLabel.Name = "threadsLabel";
             this.threadsLabel.Size = new System.Drawing.Size(46, 13);
             this.threadsLabel.TabIndex = 18;
@@ -161,7 +162,7 @@
             // 
             // offset
             // 
-            this.offset.Location = new System.Drawing.Point(153, 117);
+            this.offset.Location = new System.Drawing.Point(153, 91);
             this.offset.Maximum = new decimal(new int[] {
             11,
             0,
@@ -173,7 +174,7 @@
             // 
             // threads
             // 
-            this.threads.Location = new System.Drawing.Point(153, 331);
+            this.threads.Location = new System.Drawing.Point(153, 473);
             this.threads.Maximum = new decimal(new int[] {
             50,
             0,
@@ -195,7 +196,7 @@
             // 
             // levels
             // 
-            this.levels.Location = new System.Drawing.Point(153, 91);
+            this.levels.Location = new System.Drawing.Point(153, 65);
             this.levels.Maximum = new decimal(new int[] {
             10,
             0,
@@ -217,13 +218,13 @@
             // 
             // intensity
             // 
-            this.intensity.DecimalPlaces = 1;
+            this.intensity.DecimalPlaces = 2;
             this.intensity.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            65536});
-            this.intensity.Location = new System.Drawing.Point(153, 65);
+            131072});
+            this.intensity.Location = new System.Drawing.Point(153, 39);
             this.intensity.Name = "intensity";
             this.intensity.Size = new System.Drawing.Size(156, 20);
             this.intensity.TabIndex = 22;
@@ -239,9 +240,9 @@
             this.rangeHandling.Items.AddRange(new object[] {
             "Absolute",
             "Clamp",
-            "Inverse Absolute",
+            "InverseAbsolute",
             "Shift"});
-            this.rangeHandling.Location = new System.Drawing.Point(153, 143);
+            this.rangeHandling.Location = new System.Drawing.Point(153, 117);
             this.rangeHandling.Name = "rangeHandling";
             this.rangeHandling.Size = new System.Drawing.Size(156, 21);
             this.rangeHandling.TabIndex = 23;
@@ -249,7 +250,7 @@
             // 
             // seed
             // 
-            this.seed.Location = new System.Drawing.Point(153, 357);
+            this.seed.Location = new System.Drawing.Point(153, 499);
             this.seed.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -261,7 +262,7 @@
             // 
             // shadowRed
             // 
-            this.shadowRed.Location = new System.Drawing.Point(153, 216);
+            this.shadowRed.Location = new System.Drawing.Point(153, 183);
             this.shadowRed.Maximum = new decimal(new int[] {
             255,
             0,
@@ -273,7 +274,7 @@
             // 
             // shadowBlue
             // 
-            this.shadowBlue.Location = new System.Drawing.Point(261, 216);
+            this.shadowBlue.Location = new System.Drawing.Point(261, 183);
             this.shadowBlue.Maximum = new decimal(new int[] {
             255,
             0,
@@ -285,7 +286,7 @@
             // 
             // shadowGreen
             // 
-            this.shadowGreen.Location = new System.Drawing.Point(207, 216);
+            this.shadowGreen.Location = new System.Drawing.Point(207, 183);
             this.shadowGreen.Maximum = new decimal(new int[] {
             255,
             0,
@@ -298,7 +299,7 @@
             // redLabel
             // 
             this.redLabel.AutoSize = true;
-            this.redLabel.Location = new System.Drawing.Point(153, 197);
+            this.redLabel.Location = new System.Drawing.Point(150, 164);
             this.redLabel.Name = "redLabel";
             this.redLabel.Size = new System.Drawing.Size(27, 13);
             this.redLabel.TabIndex = 28;
@@ -307,7 +308,7 @@
             // blueLabel
             // 
             this.blueLabel.AutoSize = true;
-            this.blueLabel.Location = new System.Drawing.Point(258, 197);
+            this.blueLabel.Location = new System.Drawing.Point(258, 164);
             this.blueLabel.Name = "blueLabel";
             this.blueLabel.Size = new System.Drawing.Size(28, 13);
             this.blueLabel.TabIndex = 29;
@@ -316,7 +317,7 @@
             // greenLabel
             // 
             this.greenLabel.AutoSize = true;
-            this.greenLabel.Location = new System.Drawing.Point(204, 197);
+            this.greenLabel.Location = new System.Drawing.Point(204, 164);
             this.greenLabel.Name = "greenLabel";
             this.greenLabel.Size = new System.Drawing.Size(36, 13);
             this.greenLabel.TabIndex = 30;
@@ -324,7 +325,7 @@
             // 
             // highlightGreen
             // 
-            this.highlightGreen.Location = new System.Drawing.Point(207, 248);
+            this.highlightGreen.Location = new System.Drawing.Point(207, 209);
             this.highlightGreen.Maximum = new decimal(new int[] {
             255,
             0,
@@ -341,7 +342,7 @@
             // 
             // highlightBlue
             // 
-            this.highlightBlue.Location = new System.Drawing.Point(261, 248);
+            this.highlightBlue.Location = new System.Drawing.Point(261, 209);
             this.highlightBlue.Maximum = new decimal(new int[] {
             255,
             0,
@@ -358,7 +359,7 @@
             // 
             // highlightRed
             // 
-            this.highlightRed.Location = new System.Drawing.Point(153, 248);
+            this.highlightRed.Location = new System.Drawing.Point(153, 209);
             this.highlightRed.Maximum = new decimal(new int[] {
             255,
             0,
@@ -372,6 +373,16 @@
             0,
             0,
             0});
+            // 
+            // wrap
+            // 
+            this.wrap.AutoSize = true;
+            this.wrap.Location = new System.Drawing.Point(153, 144);
+            this.wrap.Name = "wrap";
+            this.wrap.Size = new System.Drawing.Size(52, 17);
+            this.wrap.TabIndex = 36;
+            this.wrap.Text = "Wrap";
+            this.wrap.UseVisualStyleBackColor = true;
             // 
             // resolution
             // 
@@ -401,6 +412,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(489, 531);
+            this.Controls.Add(this.wrap);
             this.Controls.Add(this.resolution);
             this.Controls.Add(this.highlightGreen);
             this.Controls.Add(this.highlightBlue);
@@ -474,6 +486,7 @@
         private System.Windows.Forms.NumericUpDown highlightBlue;
         private System.Windows.Forms.NumericUpDown highlightRed;
         private ResolutionUpDown resolution;
+        private System.Windows.Forms.CheckBox wrap;
     }
 }
 

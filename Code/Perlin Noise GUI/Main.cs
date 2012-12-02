@@ -25,6 +25,7 @@ namespace GUI
                 Seed = (int)seed.Value,
                 Highlight = Color.FromArgb((byte)highlightRed.Value, (byte)highlightGreen.Value, (byte)highlightBlue.Value),
                 Shadow = Color.FromArgb((byte)shadowRed.Value, (byte)shadowGreen.Value, (byte)shadowBlue.Value),
+                Wrap = wrap.Checked,
                 Threads = (int)threads.Value
             };
             DateTime start = DateTime.Now;

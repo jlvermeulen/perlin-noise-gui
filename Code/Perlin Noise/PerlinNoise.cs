@@ -44,50 +44,54 @@ namespace PerlinNoise
         private PerlinNoiseGenerator(PerlinNoiseSettings settings)
         {
             this.settings = settings;
-            this.arraySize = (int)Math.Pow(2, settings.Offset + 1);
         }
 
         private byte[] Generate()
         {
             Thread[] threads = new Thread[settings.Threads];
             Random random;
-            if (settings.Seed != int.MinValue)
+            if (settings.Seed != 0)
                 random = new Random(settings.Seed);
             else
                 random = new Random();
-            float ratio = (float)settings.Resolution / arraySize;
 
             texels = new byte[settings.Resolution * settings.Resolution * 3];
-            vectors = new Vector2[arraySize];
-            hashLookup = new int[arraySize];
-
-            for (int i = 0; i < arraySize; i++)
+            for (int n = 0; n < settings.Levels; n++)
             {
-                vectors[i].X = 2 * (float)random.NextDouble() - 1;
-                vectors[i].Y = 2 * (float)random.NextDouble() - 1;
-                if (vectors[i].Length() < 1)
-                    vectors[i].Normalize();
-                else if (i > 0)
-                    i--;
-                else
-                    i = 0;
-                hashLookup[i] = i;
+                arraySize = (int)Math.Pow(2, settings.Offset + 1);
+                float ratio = (float)settings.Resolution / arraySize;
+
+                vectors = new Vector2[arraySize];
+                hashLookup = new int[arraySize];
+
+                for (int i = 0; i < arraySize; i++)
+                {
+                    vectors[i].X = 2 * (float)random.NextDouble() - 1;
+                    vectors[i].Y = 2 * (float)random.NextDouble() - 1;
+                    if (vectors[i].Length() < 1)
+                        vectors[i].Normalize();
+                    else if (i > 0)
+                        i--;
+                    else
+                        i = 0;
+                    hashLookup[i] = i;
+                }
+
+                Scramble(hashLookup, random);
+
+                vectorIndices = new int[arraySize + 1, arraySize + 1];
+                for (int x = 0; x < arraySize + 1; x++)
+                    for (int y = 0; y < arraySize + 1; y++)
+                        vectorIndices[x, y] = hashLookup[(x + hashLookup[y % arraySize]) % arraySize];
+
+                for (int i = 0; i < settings.Threads; i++)
+                    threads[i] = new Thread(new ParameterizedThreadStart(FillTexels));
+                for (int i = 0; i < settings.Threads; i++)
+                    threads[i].Start(new ThreadParams(ratio, i / ratio, settings.Threads));
+                for (int i = 0; i < settings.Threads; i++)
+                    threads[i].Join();
+                settings.Offset++;
             }
-
-            Scramble(hashLookup, random);
-
-            vectorIndices = new int[arraySize + 1, arraySize + 1];
-            for (int x = 0; x < arraySize + 1; x++)
-                for (int y = 0; y < arraySize + 1; y++)
-                    vectorIndices[x, y] = hashLookup[(x + hashLookup[y % arraySize]) % arraySize];
-
-            for (int i = 0; i < settings.Threads; i++)
-                threads[i] = new Thread(new ParameterizedThreadStart(FillTexels));
-            for (int i = 0; i < settings.Threads; i++)
-                threads[i].Start(new ThreadParams(ratio, i / ratio, settings.Threads));
-            for (int i = 0; i < settings.Threads; i++)
-                threads[i].Join();
-
             return texels;
         }
 
@@ -118,11 +122,11 @@ namespace PerlinNoise
                     else if (settings.RangeHandling == RangeHandling.Shift)
                         value = (value + 1) / 2 * settings.Intensity;
 
-                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow);
+                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow, settings.Wrap);
 
-                    texels[pos] = col.B;
-                    texels[pos + 1] = col.G;
-                    texels[pos + 2] = col.R;
+                    texels[pos] = (byte)(Math.Min(texels[pos] + col.B, 255));
+                    texels[pos + 1] = (byte)(Math.Min(texels[pos + 1] + col.G, 255));
+                    texels[pos + 2] = (byte)(Math.Min(texels[pos + 2] + col.R, 255));
                 }
         }
 
@@ -165,6 +169,7 @@ namespace PerlinNoise
         public int Threads;
         public Color Shadow;
         public Color Highlight;
+        public bool Wrap;
     }
 
     struct Vector2
@@ -211,15 +216,24 @@ namespace PerlinNoise
             Z = z;
         }
 
-        public Color ToColor(Color highlight, Color shadow)
+        public Color ToColor(Color highlight, Color shadow, bool wrap)
         {
             float x, y, z;
-            x = X < 0 ? 0 : X > 1 ? 1 : X;
-            y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
-            z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
-            x = X * highlight.R + (1 - x) * shadow.R;
-            y = Y * highlight.G + (1 - y) * shadow.G;
-            z = Z * highlight.B + (1 - z) * shadow.B;
+            if (wrap)
+            {
+                x = X;
+                y = Y;
+                z = Z;
+            }
+            else
+            {
+                x = X < 0 ? 0 : X > 1 ? 1 : X;
+                y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
+                z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
+            }
+            x = x * highlight.R + (1 - x) * shadow.R;
+            y = y * highlight.G + (1 - y) * shadow.G;
+            z = z * highlight.B + (1 - z) * shadow.B;
             return Color.FromArgb((byte)x, (byte)y, (byte)z);
         }
     }
