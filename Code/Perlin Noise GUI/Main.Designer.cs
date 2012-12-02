@@ -54,6 +54,9 @@
             this.highlightBlue = new System.Windows.Forms.NumericUpDown();
             this.highlightRed = new System.Windows.Forms.NumericUpDown();
             this.wrap = new System.Windows.Forms.CheckBox();
+            this.layers = new System.Windows.Forms.ListBox();
+            this.add = new System.Windows.Forms.Button();
+            this.delete = new System.Windows.Forms.Button();
             this.resolution = new GUI.ResolutionUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
@@ -384,6 +387,35 @@
             this.wrap.Text = "Wrap";
             this.wrap.UseVisualStyleBackColor = true;
             // 
+            // layers
+            // 
+            this.layers.FormattingEnabled = true;
+            this.layers.Location = new System.Drawing.Point(12, 252);
+            this.layers.Name = "layers";
+            this.layers.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.layers.Size = new System.Drawing.Size(465, 147);
+            this.layers.TabIndex = 37;
+            // 
+            // add
+            // 
+            this.add.Location = new System.Drawing.Point(402, 206);
+            this.add.Name = "add";
+            this.add.Size = new System.Drawing.Size(75, 23);
+            this.add.TabIndex = 38;
+            this.add.Text = "Add";
+            this.add.UseVisualStyleBackColor = true;
+            this.add.Click += new System.EventHandler(this.add_Click);
+            // 
+            // delete
+            // 
+            this.delete.Location = new System.Drawing.Point(402, 406);
+            this.delete.Name = "delete";
+            this.delete.Size = new System.Drawing.Size(75, 23);
+            this.delete.TabIndex = 39;
+            this.delete.Text = "Delete";
+            this.delete.UseVisualStyleBackColor = true;
+            this.delete.Click += new System.EventHandler(this.delete_Click);
+            // 
             // resolution
             // 
             this.resolution.Location = new System.Drawing.Point(153, 13);
@@ -412,6 +444,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(489, 531);
+            this.Controls.Add(this.delete);
+            this.Controls.Add(this.add);
+            this.Controls.Add(this.layers);
             this.Controls.Add(this.wrap);
             this.Controls.Add(this.resolution);
             this.Controls.Add(this.highlightGreen);
@@ -487,6 +522,9 @@
         private System.Windows.Forms.NumericUpDown highlightRed;
         private ResolutionUpDown resolution;
         private System.Windows.Forms.CheckBox wrap;
+        private System.Windows.Forms.ListBox layers;
+        private System.Windows.Forms.Button add;
+        private System.Windows.Forms.Button delete;
     }
 }
 

@@ -10,11 +10,11 @@ namespace PerlinNoise
 {
     public class PerlinNoiseGenerator
     {
-        public static Bitmap GetImage(PerlinNoiseSettings settings)
+        public static Bitmap GetImage(PerlinNoiseSettings[] settings)
         {
             PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings);
-            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution, PixelFormat.Format24bppRgb);
-            byte[] colours = generator.Generate();
+            Bitmap bmp = new Bitmap(settings[0].Resolution, settings[0].Resolution, PixelFormat.Format24bppRgb);
+            byte[] colours = generator.texels;
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
             IntPtr ptr = bmpData.Scan0;
@@ -23,15 +23,21 @@ namespace PerlinNoise
             return bmp;
         }
 
-        public static Bitmap GetImage2(PerlinNoiseSettings settings)
+        public static PerlinNoiseSettings ParseSettings(string data)
         {
-            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings);
-            Bitmap bmp = new Bitmap(settings.Resolution, settings.Resolution);
-            byte[] colours = generator.Generate();
-            for (int i = 0; i < settings.Resolution; i++)
-                for (int j = 0; j < settings.Resolution; j++)
-                    bmp.SetPixel(i, j, Color.FromArgb(colours[(i + j * settings.Resolution) * 3], colours[(i + j * settings.Resolution) * 3 + 1], colours[(i + j * settings.Resolution) * 3 + 2]));
-            return bmp;
+            PerlinNoiseSettings settings = new PerlinNoiseSettings();
+            string[] parts = data.Split(',');
+            settings.Resolution = int.Parse(parts[0]);
+            settings.Intensity = float.Parse(parts[1]);
+            settings.Levels = int.Parse(parts[2]);
+            settings.Offset = int.Parse(parts[3]);
+            settings.RangeHandling = (RangeHandling)Enum.Parse(typeof(RangeHandling), parts[4]);
+            settings.Highlight = Color.FromArgb(byte.Parse(parts[5]), byte.Parse(parts[6]), byte.Parse(parts[7]));
+            settings.Shadow = Color.FromArgb(byte.Parse(parts[8]), byte.Parse(parts[9]), byte.Parse(parts[10]));
+            settings.Wrap = bool.Parse(parts[11]);
+            settings.Seed = int.Parse(parts[12]);
+            settings.Threads = int.Parse(parts[13]);
+            return settings;
         }
 
         PerlinNoiseSettings settings;
@@ -41,9 +47,14 @@ namespace PerlinNoise
         int[,] vectorIndices;
         int arraySize;
 
-        private PerlinNoiseGenerator(PerlinNoiseSettings settings)
+        private PerlinNoiseGenerator(PerlinNoiseSettings[] settings)
         {
-            this.settings = settings;
+            texels = new byte[settings[0].Resolution * settings[0].Resolution * 3];
+            foreach (PerlinNoiseSettings s in settings)
+            {
+                this.settings = s;
+                Generate();
+            }
         }
 
         private byte[] Generate()
@@ -55,7 +66,6 @@ namespace PerlinNoise
             else
                 random = new Random();
 
-            texels = new byte[settings.Resolution * settings.Resolution * 3];
             for (int n = 0; n < settings.Levels; n++)
             {
                 arraySize = (int)Math.Pow(2, settings.Offset + 1);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using PerlinNoise;
+using System.Collections.Generic;
 
 namespace GUI
 {
@@ -15,19 +17,14 @@ namespace GUI
 
         private void generate_Click(object sender, EventArgs e)
         {
-            PerlinNoiseSettings settings = new PerlinNoiseSettings()
+            if (layers.Items.Count == 0)
             {
-                Intensity = (float)intensity.Value,
-                Levels = (int)levels.Value,
-                Offset = (int)offset.Value,
-                RangeHandling = (RangeHandling)Enum.Parse(typeof(RangeHandling), rangeHandling.Text),
-                Resolution = (int)resolution.Value,
-                Seed = (int)seed.Value,
-                Highlight = Color.FromArgb((byte)highlightRed.Value, (byte)highlightGreen.Value, (byte)highlightBlue.Value),
-                Shadow = Color.FromArgb((byte)shadowRed.Value, (byte)shadowGreen.Value, (byte)shadowBlue.Value),
-                Wrap = wrap.Checked,
-                Threads = (int)threads.Value
-            };
+                MessageBox.Show("Please add a layer.");
+                return;
+            }
+            PerlinNoiseSettings[] settings = new PerlinNoiseSettings[layers.Items.Count];
+            for(int i = 0; i < layers.Items.Count; i++)
+                settings[i] = PerlinNoiseGenerator.ParseSettings((string)layers.Items[i]);
             DateTime start = DateTime.Now;
             Image full = PerlinNoiseGenerator.GetImage(settings);
             DateTime end = DateTime.Now;
@@ -36,13 +33,6 @@ namespace GUI
             Form viewer = new ImageViewer(thumb);
             viewer.Show();
             MessageBox.Show("Generated image in " + (end - start).TotalSeconds + " seconds.");
-            //start = DateTime.Now;
-            //Image full2 = PerlinNoiseGenerator.GetImage2(settings);
-            //end = DateTime.Now;
-            //Image thumb2 = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
-            //Form viewer2 = new ImageViewer(thumb2);
-            //viewer2.Show();
-            //MessageBox.Show("Generated image in " + (end - start).TotalSeconds + " seconds.");
         }
 
         private void resolution_Validated(object sender, EventArgs e)
@@ -58,6 +48,39 @@ namespace GUI
                 resolution.Value = val1;
             else
                 resolution.Value = val2;
+        }
+
+        private void add_Click(object sender, EventArgs e)
+        {
+            layers.Items.Add
+                (
+                    resolution.Value + ", " +
+                    intensity.Value + ", " +
+                    levels.Value + ", " +
+                    offset.Value + ", " +
+                    rangeHandling.Text + ", " +
+                    highlightRed.Value + ", " +
+                    highlightGreen.Value + ", " +
+                    highlightBlue.Value + ", " +
+                    shadowRed.Value + ", " +
+                    shadowGreen.Value + ", " +
+                    shadowBlue.Value + ", " +
+                    wrap.Checked + ", " +
+                    seed.Value + ", " +
+                    threads.Value
+                );
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+            ListBox.SelectedIndexCollection selection = layers.SelectedIndices;
+            List<int> indices = new List<int>();
+            foreach (int s in selection)
+                indices.Add(s);
+            indices.Sort();
+
+            for (int i = indices.Count - 1; i >= 0; i--)
+                layers.Items.RemoveAt(indices[i]);
         }
     }
 
