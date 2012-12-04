@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using PerlinNoise;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace GUI
 {
@@ -55,7 +56,7 @@ namespace GUI
             layers.Items.Add
                 (
                     resolution.Value + ", " +
-                    intensity.Value + ", " +
+                    intensity.Value.ToString("0.00", CultureInfo.CreateSpecificCulture("en-GB")) + ", " +
                     levels.Value + ", " +
                     offset.Value + ", " +
                     rangeHandling.Text + ", " +
@@ -81,6 +82,18 @@ namespace GUI
 
             for (int i = indices.Count - 1; i >= 0; i--)
                 layers.Items.RemoveAt(indices[i]);
+        }
+
+        private void offset_ValueChanged(object sender, EventArgs e)
+        {
+            if (offset.Value + levels.Value > 11)
+                offset.Value--;
+        }
+
+        private void levels_ValueChanged(object sender, EventArgs e)
+        {
+            if (offset.Value + levels.Value > 11)
+                levels.Value--;
         }
     }
 

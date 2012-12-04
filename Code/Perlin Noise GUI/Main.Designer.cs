@@ -167,13 +167,14 @@
             // 
             this.offset.Location = new System.Drawing.Point(153, 91);
             this.offset.Maximum = new decimal(new int[] {
-            11,
+            10,
             0,
             0,
             0});
             this.offset.Name = "offset";
             this.offset.Size = new System.Drawing.Size(156, 20);
             this.offset.TabIndex = 19;
+            this.offset.ValueChanged += new System.EventHandler(this.offset_ValueChanged);
             // 
             // threads
             // 
@@ -218,6 +219,7 @@
             0,
             0,
             0});
+            this.levels.ValueChanged += new System.EventHandler(this.levels_ValueChanged);
             // 
             // intensity
             // 

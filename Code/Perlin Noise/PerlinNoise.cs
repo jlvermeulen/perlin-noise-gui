@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Globalization;
 
 public enum RangeHandling { Absolute, Clamp, InverseAbsolute, Shift };
 
@@ -28,7 +29,7 @@ namespace PerlinNoise
             PerlinNoiseSettings settings = new PerlinNoiseSettings();
             string[] parts = data.Split(',');
             settings.Resolution = int.Parse(parts[0]);
-            settings.Intensity = float.Parse(parts[1]);
+            settings.Intensity = float.Parse(parts[1], CultureInfo.CreateSpecificCulture("en-GB"));
             settings.Levels = int.Parse(parts[2]);
             settings.Offset = int.Parse(parts[3]);
             settings.RangeHandling = (RangeHandling)Enum.Parse(typeof(RangeHandling), parts[4]);
@@ -144,11 +145,8 @@ namespace PerlinNoise
         {
             u = Math.Abs(u);
             if (u < 1)
-                u = 2 * (float)Math.Pow(u, 3) - 3 * (float)Math.Pow(u, 2) + 1;
-            else
-                u = 0;
-
-            return u;
+                return 2 * (float)Math.Pow(u, 3) - 3 * (float)Math.Pow(u, 2) + 1;
+            return 0;
         }
 
         private static void Scramble(int[] array, Random r)
