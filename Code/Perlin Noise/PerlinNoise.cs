@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Globalization;
 
 public enum RangeHandling { Absolute, Clamp, InverseAbsolute, Shift };
 

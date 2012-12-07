@@ -1,11 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 using PerlinNoise;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace GUI
 {
@@ -31,7 +30,7 @@ namespace GUI
             DateTime end = DateTime.Now;
             full.Save("test.png");
             Image thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
-            Form viewer = new ImageViewer(thumb);
+            ImageViewer viewer = new ImageViewer(thumb);
             viewer.Show();
             MessageBox.Show("Generated image in " + (end - start).TotalSeconds + " seconds.");
         }
@@ -94,6 +93,73 @@ namespace GUI
         {
             if (offset.Value + levels.Value > 11)
                 levels.Value--;
+        }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            if (layers.Items.Count == 0)
+            {
+                MessageBox.Show("A preset needs at least one layer.", "No layers", MessageBoxButtons.OK);
+                return;
+            }
+            Dictionary<string, List<string>> presets = LoadPresets();
+            PresetSaver presetSaver = new PresetSaver(presets.Keys);
+            DialogResult result = presetSaver.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (presets.ContainsKey(presetSaver.PresetName))
+                    presets[presetSaver.PresetName] = null;
+                else
+                    presets.Add(presetSaver.PresetName, null);
+                List<string> presetLayers = new List<string>();
+                foreach (object o in layers.Items)
+                    presetLayers.Add((string)o);
+                presets[presetSaver.PresetName] = presetLayers;
+                SavePresets(presets);
+            }
+        }
+
+        private void load_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, List<string>> presets = LoadPresets();
+            PresetLoader presetLoader = new PresetLoader(new List<string>(presets.Keys));
+            DialogResult result = presetLoader.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                layers.Items.Clear();
+                layers.Items.AddRange(presets[presetLoader.Selection].ToArray());
+            }
+            layers.ClearSelected();
+        }
+
+        private Dictionary<string, List<string>> LoadPresets()
+        {
+            StreamReader reader = new StreamReader("Presets.txt");
+            Dictionary<string, List<string>> presets = new Dictionary<string, List<string>>();
+            string name, layer;
+            List<string> presetLayers;
+            while ((name = reader.ReadLine()) != null)
+            {
+                presetLayers = new List<string>();
+                while (!(layer = reader.ReadLine()).StartsWith("#"))
+                    presetLayers.Add(layer);
+                presets.Add(name.Remove(0, 1), presetLayers);
+            }
+            reader.Close();
+            return presets;
+        }
+
+        private void SavePresets(Dictionary<string, List<string>> presets)
+        {
+            StreamWriter writer = new StreamWriter("Presets.txt", false);
+            foreach (KeyValuePair<string, List<string>> kvp in presets)
+            {
+                writer.WriteLine("#" + kvp.Key);
+                foreach (string layer in kvp.Value)
+                    writer.WriteLine(layer);
+                writer.WriteLine("#");
+            }
+            writer.Close();
         }
     }
 

@@ -57,6 +57,8 @@
             this.layers = new System.Windows.Forms.ListBox();
             this.add = new System.Windows.Forms.Button();
             this.delete = new System.Windows.Forms.Button();
+            this.save = new System.Windows.Forms.Button();
+            this.load = new System.Windows.Forms.Button();
             this.resolution = new GUI.ResolutionUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
@@ -74,9 +76,9 @@
             // 
             // generate
             // 
-            this.generate.Location = new System.Drawing.Point(402, 487);
+            this.generate.Location = new System.Drawing.Point(402, 484);
             this.generate.Name = "generate";
-            this.generate.Size = new System.Drawing.Size(75, 32);
+            this.generate.Size = new System.Drawing.Size(75, 35);
             this.generate.TabIndex = 0;
             this.generate.Text = "Generate";
             this.generate.UseVisualStyleBackColor = true;
@@ -400,23 +402,43 @@
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(402, 206);
+            this.add.Location = new System.Drawing.Point(321, 405);
             this.add.Name = "add";
-            this.add.Size = new System.Drawing.Size(75, 23);
+            this.add.Size = new System.Drawing.Size(75, 30);
             this.add.TabIndex = 38;
-            this.add.Text = "Add";
+            this.add.Text = "Add layer";
             this.add.UseVisualStyleBackColor = true;
             this.add.Click += new System.EventHandler(this.add_Click);
             // 
             // delete
             // 
-            this.delete.Location = new System.Drawing.Point(402, 406);
+            this.delete.Location = new System.Drawing.Point(402, 405);
             this.delete.Name = "delete";
-            this.delete.Size = new System.Drawing.Size(75, 23);
+            this.delete.Size = new System.Drawing.Size(75, 30);
             this.delete.TabIndex = 39;
-            this.delete.Text = "Delete";
+            this.delete.Text = "Delete layer";
             this.delete.UseVisualStyleBackColor = true;
             this.delete.Click += new System.EventHandler(this.delete_Click);
+            // 
+            // save
+            // 
+            this.save.Location = new System.Drawing.Point(12, 405);
+            this.save.Name = "save";
+            this.save.Size = new System.Drawing.Size(75, 30);
+            this.save.TabIndex = 40;
+            this.save.Text = "Save preset";
+            this.save.UseVisualStyleBackColor = true;
+            this.save.Click += new System.EventHandler(this.save_Click);
+            // 
+            // load
+            // 
+            this.load.Location = new System.Drawing.Point(93, 405);
+            this.load.Name = "load";
+            this.load.Size = new System.Drawing.Size(75, 30);
+            this.load.TabIndex = 41;
+            this.load.Text = "Load preset";
+            this.load.UseVisualStyleBackColor = true;
+            this.load.Click += new System.EventHandler(this.load_Click);
             // 
             // resolution
             // 
@@ -446,6 +468,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(489, 531);
+            this.Controls.Add(this.load);
+            this.Controls.Add(this.save);
             this.Controls.Add(this.delete);
             this.Controls.Add(this.add);
             this.Controls.Add(this.layers);
@@ -477,6 +501,7 @@
             this.Controls.Add(this.resolutionLabel);
             this.Controls.Add(this.generate);
             this.Name = "Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Perlin Noise GUI";
             ((System.ComponentModel.ISupportInitialize)(this.offset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).EndInit();
@@ -527,6 +552,8 @@
         private System.Windows.Forms.ListBox layers;
         private System.Windows.Forms.Button add;
         private System.Windows.Forms.Button delete;
+        private System.Windows.Forms.Button save;
+        private System.Windows.Forms.Button load;
     }
 }
 

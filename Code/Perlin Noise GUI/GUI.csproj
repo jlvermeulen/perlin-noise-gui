@@ -59,6 +59,18 @@
     <Compile Include="ImageViewer.Designer.cs">
       <DependentUpon>ImageViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="PresetLoader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PresetLoader.Designer.cs">
+      <DependentUpon>PresetLoader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PresetSaver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PresetSaver.Designer.cs">
+      <DependentUpon>PresetSaver.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ImageViewer.resx">
@@ -66,6 +78,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresetLoader.resx">
+      <DependentUpon>PresetLoader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresetSaver.resx">
+      <DependentUpon>PresetSaver.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -92,6 +110,11 @@
       <Project>{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}</Project>
       <Name>Perlin Noise</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Presets.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
