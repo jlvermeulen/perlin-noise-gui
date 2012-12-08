@@ -11,10 +11,10 @@ namespace PerlinNoise
 {
     public class PerlinNoiseGenerator
     {
-        public static Bitmap GetImage(PerlinNoiseSettings[] settings)
+        public static Bitmap GetImage(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
         {
-            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings);
-            Bitmap bmp = new Bitmap(settings[0].Resolution, settings[0].Resolution, PixelFormat.Format24bppRgb);
+            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings, resolution, threads, seed);
+            Bitmap bmp = new Bitmap(resolution, resolution, PixelFormat.Format24bppRgb);
             byte[] colours = generator.texels;
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
@@ -28,29 +28,31 @@ namespace PerlinNoise
         {
             PerlinNoiseSettings settings = new PerlinNoiseSettings();
             string[] parts = data.Split(',');
-            settings.Resolution = int.Parse(parts[0]);
-            settings.Intensity = float.Parse(parts[1], CultureInfo.CreateSpecificCulture("en-GB"));
-            settings.Levels = int.Parse(parts[2]);
-            settings.Offset = int.Parse(parts[3]);
-            settings.RangeHandling = (RangeHandling)Enum.Parse(typeof(RangeHandling), parts[4]);
-            settings.Highlight = Color.FromArgb(byte.Parse(parts[5]), byte.Parse(parts[6]), byte.Parse(parts[7]));
-            settings.Shadow = Color.FromArgb(byte.Parse(parts[8]), byte.Parse(parts[9]), byte.Parse(parts[10]));
-            settings.Wrap = bool.Parse(parts[11]);
-            settings.Seed = int.Parse(parts[12]);
-            settings.Threads = int.Parse(parts[13]);
+            settings.Intensity = float.Parse(parts[0], CultureInfo.CreateSpecificCulture("en-GB"));
+            settings.Levels = int.Parse(parts[1]);
+            settings.Offset = int.Parse(parts[2]);
+            settings.RangeHandling = (RangeHandling)Enum.Parse(typeof(RangeHandling), parts[3]);
+            settings.Highlight = Color.FromArgb(byte.Parse(parts[4]), byte.Parse(parts[5]), byte.Parse(parts[6]));
+            settings.Shadow = Color.FromArgb(byte.Parse(parts[7]), byte.Parse(parts[8]), byte.Parse(parts[9]));
+            settings.Wrap = bool.Parse(parts[10]);
+            settings.ChannelWrap = bool.Parse(parts[11]);
             return settings;
         }
 
         PerlinNoiseSettings settings;
+        int resolution, threadCount, seed;
         byte[] texels;
         Vector2[] vectors;
         int[] hashLookup;
         int[,] vectorIndices;
         int arraySize;
 
-        private PerlinNoiseGenerator(PerlinNoiseSettings[] settings)
+        private PerlinNoiseGenerator(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
         {
-            texels = new byte[settings[0].Resolution * settings[0].Resolution * 3];
+            texels = new byte[resolution * resolution * 3];
+            this.resolution = resolution;
+            this.threadCount = threads;
+            this.seed = seed;
             foreach (PerlinNoiseSettings s in settings)
             {
                 this.settings = s;
@@ -60,17 +62,17 @@ namespace PerlinNoise
 
         private byte[] Generate()
         {
-            Thread[] threads = new Thread[settings.Threads];
+            Thread[] threads = new Thread[threadCount];
             Random random;
-            if (settings.Seed != 0)
-                random = new Random(settings.Seed);
+            if (seed != 0)
+                random = new Random(seed);
             else
                 random = new Random();
 
             for (int n = 0; n < settings.Levels; n++)
             {
                 arraySize = (int)Math.Pow(2, settings.Offset + 1);
-                float ratio = (float)settings.Resolution / arraySize;
+                float ratio = (float)resolution / arraySize;
 
                 vectors = new Vector2[arraySize];
                 hashLookup = new int[arraySize];
@@ -95,11 +97,11 @@ namespace PerlinNoise
                     for (int y = 0; y < arraySize + 1; y++)
                         vectorIndices[x, y] = hashLookup[(x + hashLookup[y % arraySize]) % arraySize];
 
-                for (int i = 0; i < settings.Threads; i++)
+                for (int i = 0; i < threadCount; i++)
                     threads[i] = new Thread(new ParameterizedThreadStart(FillTexels));
-                for (int i = 0; i < settings.Threads; i++)
-                    threads[i].Start(new ThreadParams(ratio, i / ratio, settings.Threads));
-                for (int i = 0; i < settings.Threads; i++)
+                for (int i = 0; i < threadCount; i++)
+                    threads[i].Start(new ThreadParams(ratio, i / ratio, threadCount));
+                for (int i = 0; i < threadCount; i++)
                     threads[i].Join();
                 settings.Offset++;
             }
@@ -122,7 +124,7 @@ namespace PerlinNoise
 
                     int tx = (int)Math.Round((x * tParams.Ratio));
                     int ty = (int)Math.Round((y * tParams.Ratio));
-                    int pos = (tx + ty * settings.Resolution) * 3;
+                    int pos = (tx + ty * resolution) * 3;
 
                     if (settings.RangeHandling == RangeHandling.Absolute)
                         value = Math.Abs(value) * settings.Intensity;
@@ -133,7 +135,7 @@ namespace PerlinNoise
                     else if (settings.RangeHandling == RangeHandling.Shift)
                         value = (value + 1) / 2 * settings.Intensity;
 
-                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow, settings.Wrap);
+                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow, settings.Wrap, settings.ChannelWrap);
 
                     texels[pos] = (byte)(Math.Min(texels[pos] + col.B, 255));
                     texels[pos + 1] = (byte)(Math.Min(texels[pos + 1] + col.G, 255));
@@ -168,16 +170,14 @@ namespace PerlinNoise
 
     public class PerlinNoiseSettings
     {
-        public int Seed;
-        public int Resolution;
         public float Intensity;
         public int Offset;
         public int Levels;
         public RangeHandling RangeHandling;
-        public int Threads;
         public Color Shadow;
         public Color Highlight;
         public bool Wrap;
+        public bool ChannelWrap;
     }
 
     struct Vector2
@@ -224,7 +224,7 @@ namespace PerlinNoise
             Z = z;
         }
 
-        public Color ToColor(Color highlight, Color shadow, bool wrap)
+        public Color ToColor(Color highlight, Color shadow, bool wrap, bool channelWrap)
         {
             float x, y, z;
             if (wrap)
@@ -232,6 +232,12 @@ namespace PerlinNoise
                 x = X;
                 y = Y;
                 z = Z;
+                if (!channelWrap)
+                {
+                    x %= 1;
+                    y %= 1;
+                    z %= 1;
+                }
             }
             else
             {

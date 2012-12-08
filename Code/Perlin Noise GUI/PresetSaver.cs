@@ -6,12 +6,12 @@ namespace GUI
 {
     public partial class PresetSaver : Form
     {
-        List<string> keys;
+        Main main;
 
-        public PresetSaver(Dictionary<string, List<string>>.KeyCollection keys)
+        public PresetSaver(Main main)
         {
             InitializeComponent();
-            this.keys = new List<string>(keys);
+            this.main = main;
         }
 
         public string PresetName
@@ -21,12 +21,13 @@ namespace GUI
 
         private void save_Click(object sender, EventArgs e)
         {
+            SortedDictionary<string, List<string>> presets = main.LoadPresets();
             if (presetName.Text == "")
             {
                 MessageBox.Show("Please enter a name for the preset.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (keys.Contains(presetName.Text))
+            if (presets.ContainsKey(presetName.Text))
             {
                 DialogResult result = MessageBox.Show("A preset by that name already exists.\nDo you want to overwrite it?", "Overwrite?", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)

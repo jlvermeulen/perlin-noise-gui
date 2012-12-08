@@ -65,6 +65,12 @@
     <Compile Include="PresetLoader.Designer.cs">
       <DependentUpon>PresetLoader.cs</DependentUpon>
     </Compile>
+    <Compile Include="PresetManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PresetManager.Designer.cs">
+      <DependentUpon>PresetManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="PresetSaver.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,6 +87,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PresetLoader.resx">
       <DependentUpon>PresetLoader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresetManager.resx">
+      <DependentUpon>PresetManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PresetSaver.resx">
       <DependentUpon>PresetSaver.cs</DependentUpon>
@@ -115,6 +124,9 @@
     <None Include="Presets.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DefaultPresets.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

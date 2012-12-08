@@ -6,11 +6,10 @@ namespace GUI
 {
     public partial class PresetLoader : Form
     {
-        public PresetLoader(List<string> presets)
+        public PresetLoader(Main main)
         {
             InitializeComponent();
-            presets.Sort();
-            presetNames.Items.AddRange(presets.ToArray());
+            presetNames.Items.AddRange(new List<string>(main.LoadPresets().Keys).ToArray());
         }
 
         public string Selection

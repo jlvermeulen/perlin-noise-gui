@@ -59,7 +59,10 @@
             this.delete = new System.Windows.Forms.Button();
             this.save = new System.Windows.Forms.Button();
             this.load = new System.Windows.Forms.Button();
+            this.clear = new System.Windows.Forms.Button();
+            this.manage = new System.Windows.Forms.Button();
             this.resolution = new GUI.ResolutionUpDown();
+            this.channelWrap = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.levels)).BeginInit();
@@ -76,9 +79,9 @@
             // 
             // generate
             // 
-            this.generate.Location = new System.Drawing.Point(402, 484);
+            this.generate.Location = new System.Drawing.Point(386, 473);
             this.generate.Name = "generate";
-            this.generate.Size = new System.Drawing.Size(75, 35);
+            this.generate.Size = new System.Drawing.Size(91, 46);
             this.generate.TabIndex = 0;
             this.generate.Text = "Generate";
             this.generate.UseVisualStyleBackColor = true;
@@ -87,7 +90,7 @@
             // resolutionLabel
             // 
             this.resolutionLabel.AutoSize = true;
-            this.resolutionLabel.Location = new System.Drawing.Point(12, 15);
+            this.resolutionLabel.Location = new System.Drawing.Point(12, 449);
             this.resolutionLabel.Name = "resolutionLabel";
             this.resolutionLabel.Size = new System.Drawing.Size(57, 13);
             this.resolutionLabel.TabIndex = 2;
@@ -105,7 +108,7 @@
             // intensityLabel
             // 
             this.intensityLabel.AutoSize = true;
-            this.intensityLabel.Location = new System.Drawing.Point(12, 41);
+            this.intensityLabel.Location = new System.Drawing.Point(12, 14);
             this.intensityLabel.Name = "intensityLabel";
             this.intensityLabel.Size = new System.Drawing.Size(46, 13);
             this.intensityLabel.TabIndex = 6;
@@ -114,7 +117,7 @@
             // levelsLabel
             // 
             this.levelsLabel.AutoSize = true;
-            this.levelsLabel.Location = new System.Drawing.Point(12, 67);
+            this.levelsLabel.Location = new System.Drawing.Point(12, 40);
             this.levelsLabel.Name = "levelsLabel";
             this.levelsLabel.Size = new System.Drawing.Size(38, 13);
             this.levelsLabel.TabIndex = 8;
@@ -123,7 +126,7 @@
             // shadowLabel
             // 
             this.shadowLabel.AutoSize = true;
-            this.shadowLabel.Location = new System.Drawing.Point(12, 191);
+            this.shadowLabel.Location = new System.Drawing.Point(12, 164);
             this.shadowLabel.Name = "shadowLabel";
             this.shadowLabel.Size = new System.Drawing.Size(46, 13);
             this.shadowLabel.TabIndex = 10;
@@ -132,7 +135,7 @@
             // highlightLabel
             // 
             this.highlightLabel.AutoSize = true;
-            this.highlightLabel.Location = new System.Drawing.Point(12, 211);
+            this.highlightLabel.Location = new System.Drawing.Point(12, 184);
             this.highlightLabel.Name = "highlightLabel";
             this.highlightLabel.Size = new System.Drawing.Size(48, 13);
             this.highlightLabel.TabIndex = 12;
@@ -141,7 +144,7 @@
             // offsetLabel
             // 
             this.offsetLabel.AutoSize = true;
-            this.offsetLabel.Location = new System.Drawing.Point(12, 93);
+            this.offsetLabel.Location = new System.Drawing.Point(12, 66);
             this.offsetLabel.Name = "offsetLabel";
             this.offsetLabel.Size = new System.Drawing.Size(35, 13);
             this.offsetLabel.TabIndex = 14;
@@ -150,7 +153,7 @@
             // rangeHandlingLabel
             // 
             this.rangeHandlingLabel.AutoSize = true;
-            this.rangeHandlingLabel.Location = new System.Drawing.Point(12, 120);
+            this.rangeHandlingLabel.Location = new System.Drawing.Point(12, 93);
             this.rangeHandlingLabel.Name = "rangeHandlingLabel";
             this.rangeHandlingLabel.Size = new System.Drawing.Size(84, 13);
             this.rangeHandlingLabel.TabIndex = 16;
@@ -167,7 +170,7 @@
             // 
             // offset
             // 
-            this.offset.Location = new System.Drawing.Point(153, 91);
+            this.offset.Location = new System.Drawing.Point(153, 64);
             this.offset.Maximum = new decimal(new int[] {
             10,
             0,
@@ -202,7 +205,7 @@
             // 
             // levels
             // 
-            this.levels.Location = new System.Drawing.Point(153, 65);
+            this.levels.Location = new System.Drawing.Point(153, 38);
             this.levels.Maximum = new decimal(new int[] {
             10,
             0,
@@ -231,7 +234,7 @@
             0,
             0,
             131072});
-            this.intensity.Location = new System.Drawing.Point(153, 39);
+            this.intensity.Location = new System.Drawing.Point(153, 12);
             this.intensity.Name = "intensity";
             this.intensity.Size = new System.Drawing.Size(156, 20);
             this.intensity.TabIndex = 22;
@@ -249,7 +252,7 @@
             "Clamp",
             "InverseAbsolute",
             "Shift"});
-            this.rangeHandling.Location = new System.Drawing.Point(153, 117);
+            this.rangeHandling.Location = new System.Drawing.Point(153, 90);
             this.rangeHandling.Name = "rangeHandling";
             this.rangeHandling.Size = new System.Drawing.Size(156, 21);
             this.rangeHandling.TabIndex = 23;
@@ -269,7 +272,7 @@
             // 
             // shadowRed
             // 
-            this.shadowRed.Location = new System.Drawing.Point(153, 183);
+            this.shadowRed.Location = new System.Drawing.Point(153, 156);
             this.shadowRed.Maximum = new decimal(new int[] {
             255,
             0,
@@ -281,7 +284,7 @@
             // 
             // shadowBlue
             // 
-            this.shadowBlue.Location = new System.Drawing.Point(261, 183);
+            this.shadowBlue.Location = new System.Drawing.Point(261, 156);
             this.shadowBlue.Maximum = new decimal(new int[] {
             255,
             0,
@@ -293,7 +296,7 @@
             // 
             // shadowGreen
             // 
-            this.shadowGreen.Location = new System.Drawing.Point(207, 183);
+            this.shadowGreen.Location = new System.Drawing.Point(207, 156);
             this.shadowGreen.Maximum = new decimal(new int[] {
             255,
             0,
@@ -306,7 +309,7 @@
             // redLabel
             // 
             this.redLabel.AutoSize = true;
-            this.redLabel.Location = new System.Drawing.Point(150, 164);
+            this.redLabel.Location = new System.Drawing.Point(150, 137);
             this.redLabel.Name = "redLabel";
             this.redLabel.Size = new System.Drawing.Size(27, 13);
             this.redLabel.TabIndex = 28;
@@ -315,7 +318,7 @@
             // blueLabel
             // 
             this.blueLabel.AutoSize = true;
-            this.blueLabel.Location = new System.Drawing.Point(258, 164);
+            this.blueLabel.Location = new System.Drawing.Point(258, 137);
             this.blueLabel.Name = "blueLabel";
             this.blueLabel.Size = new System.Drawing.Size(28, 13);
             this.blueLabel.TabIndex = 29;
@@ -324,7 +327,7 @@
             // greenLabel
             // 
             this.greenLabel.AutoSize = true;
-            this.greenLabel.Location = new System.Drawing.Point(204, 164);
+            this.greenLabel.Location = new System.Drawing.Point(204, 137);
             this.greenLabel.Name = "greenLabel";
             this.greenLabel.Size = new System.Drawing.Size(36, 13);
             this.greenLabel.TabIndex = 30;
@@ -332,7 +335,7 @@
             // 
             // highlightGreen
             // 
-            this.highlightGreen.Location = new System.Drawing.Point(207, 209);
+            this.highlightGreen.Location = new System.Drawing.Point(207, 182);
             this.highlightGreen.Maximum = new decimal(new int[] {
             255,
             0,
@@ -349,7 +352,7 @@
             // 
             // highlightBlue
             // 
-            this.highlightBlue.Location = new System.Drawing.Point(261, 209);
+            this.highlightBlue.Location = new System.Drawing.Point(261, 182);
             this.highlightBlue.Maximum = new decimal(new int[] {
             255,
             0,
@@ -366,7 +369,7 @@
             // 
             // highlightRed
             // 
-            this.highlightRed.Location = new System.Drawing.Point(153, 209);
+            this.highlightRed.Location = new System.Drawing.Point(153, 182);
             this.highlightRed.Maximum = new decimal(new int[] {
             255,
             0,
@@ -384,27 +387,28 @@
             // wrap
             // 
             this.wrap.AutoSize = true;
-            this.wrap.Location = new System.Drawing.Point(153, 144);
+            this.wrap.Location = new System.Drawing.Point(153, 117);
             this.wrap.Name = "wrap";
             this.wrap.Size = new System.Drawing.Size(52, 17);
             this.wrap.TabIndex = 36;
             this.wrap.Text = "Wrap";
             this.wrap.UseVisualStyleBackColor = true;
+            this.wrap.CheckedChanged += new System.EventHandler(this.wrap_CheckedChanged);
             // 
             // layers
             // 
             this.layers.FormattingEnabled = true;
-            this.layers.Location = new System.Drawing.Point(12, 252);
+            this.layers.Location = new System.Drawing.Point(12, 255);
             this.layers.Name = "layers";
             this.layers.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.layers.Size = new System.Drawing.Size(465, 147);
+            this.layers.Size = new System.Drawing.Size(368, 186);
             this.layers.TabIndex = 37;
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(321, 405);
+            this.add.Location = new System.Drawing.Point(386, 255);
             this.add.Name = "add";
-            this.add.Size = new System.Drawing.Size(75, 30);
+            this.add.Size = new System.Drawing.Size(91, 26);
             this.add.TabIndex = 38;
             this.add.Text = "Add layer";
             this.add.UseVisualStyleBackColor = true;
@@ -412,9 +416,9 @@
             // 
             // delete
             // 
-            this.delete.Location = new System.Drawing.Point(402, 405);
+            this.delete.Location = new System.Drawing.Point(386, 287);
             this.delete.Name = "delete";
-            this.delete.Size = new System.Drawing.Size(75, 30);
+            this.delete.Size = new System.Drawing.Size(91, 26);
             this.delete.TabIndex = 39;
             this.delete.Text = "Delete layer";
             this.delete.UseVisualStyleBackColor = true;
@@ -422,9 +426,9 @@
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(12, 405);
+            this.save.Location = new System.Drawing.Point(386, 351);
             this.save.Name = "save";
-            this.save.Size = new System.Drawing.Size(75, 30);
+            this.save.Size = new System.Drawing.Size(91, 26);
             this.save.TabIndex = 40;
             this.save.Text = "Save preset";
             this.save.UseVisualStyleBackColor = true;
@@ -432,17 +436,36 @@
             // 
             // load
             // 
-            this.load.Location = new System.Drawing.Point(93, 405);
+            this.load.Location = new System.Drawing.Point(386, 383);
             this.load.Name = "load";
-            this.load.Size = new System.Drawing.Size(75, 30);
+            this.load.Size = new System.Drawing.Size(91, 26);
             this.load.TabIndex = 41;
             this.load.Text = "Load preset";
             this.load.UseVisualStyleBackColor = true;
             this.load.Click += new System.EventHandler(this.load_Click);
             // 
+            // clear
+            // 
+            this.clear.Location = new System.Drawing.Point(386, 319);
+            this.clear.Name = "clear";
+            this.clear.Size = new System.Drawing.Size(91, 26);
+            this.clear.TabIndex = 42;
+            this.clear.Text = "Clear layers";
+            this.clear.UseVisualStyleBackColor = true;
+            // 
+            // manage
+            // 
+            this.manage.Location = new System.Drawing.Point(386, 415);
+            this.manage.Name = "manage";
+            this.manage.Size = new System.Drawing.Size(91, 26);
+            this.manage.TabIndex = 43;
+            this.manage.Text = "Manage presets";
+            this.manage.UseVisualStyleBackColor = true;
+            this.manage.Click += new System.EventHandler(this.manage_Click);
+            // 
             // resolution
             // 
-            this.resolution.Location = new System.Drawing.Point(153, 13);
+            this.resolution.Location = new System.Drawing.Point(153, 447);
             this.resolution.Maximum = new decimal(new int[] {
             8192,
             0,
@@ -454,7 +477,7 @@
             0,
             0});
             this.resolution.Name = "resolution";
-            this.resolution.Size = new System.Drawing.Size(156, 20);
+            this.resolution.Size = new System.Drawing.Size(120, 20);
             this.resolution.TabIndex = 35;
             this.resolution.Value = new decimal(new int[] {
             512,
@@ -463,11 +486,25 @@
             0});
             this.resolution.Validated += new System.EventHandler(this.resolution_Validated);
             // 
+            // channelWrap
+            // 
+            this.channelWrap.AutoSize = true;
+            this.channelWrap.Enabled = false;
+            this.channelWrap.Location = new System.Drawing.Point(207, 117);
+            this.channelWrap.Name = "channelWrap";
+            this.channelWrap.Size = new System.Drawing.Size(83, 17);
+            this.channelWrap.TabIndex = 44;
+            this.channelWrap.Text = "Per channel";
+            this.channelWrap.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(489, 531);
+            this.Controls.Add(this.channelWrap);
+            this.Controls.Add(this.manage);
+            this.Controls.Add(this.clear);
             this.Controls.Add(this.load);
             this.Controls.Add(this.save);
             this.Controls.Add(this.delete);
@@ -554,6 +591,9 @@
         private System.Windows.Forms.Button delete;
         private System.Windows.Forms.Button save;
         private System.Windows.Forms.Button load;
+        private System.Windows.Forms.Button clear;
+        private System.Windows.Forms.Button manage;
+        private System.Windows.Forms.CheckBox channelWrap;
     }
 }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using PerlinNoise;
 
@@ -26,7 +27,7 @@ namespace GUI
             for(int i = 0; i < layers.Items.Count; i++)
                 settings[i] = PerlinNoiseGenerator.ParseSettings((string)layers.Items[i]);
             DateTime start = DateTime.Now;
-            Image full = PerlinNoiseGenerator.GetImage(settings);
+            Image full = PerlinNoiseGenerator.GetImage(settings, (int)resolution.Value, (int)threads.Value, (int)seed.Value);
             DateTime end = DateTime.Now;
             full.Save("test.png");
             Image thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
@@ -54,7 +55,6 @@ namespace GUI
         {
             layers.Items.Add
                 (
-                    resolution.Value + ", " +
                     intensity.Value.ToString("0.00", CultureInfo.CreateSpecificCulture("en-GB")) + ", " +
                     levels.Value + ", " +
                     offset.Value + ", " +
@@ -66,8 +66,7 @@ namespace GUI
                     shadowGreen.Value + ", " +
                     shadowBlue.Value + ", " +
                     wrap.Checked + ", " +
-                    seed.Value + ", " +
-                    threads.Value
+                    channelWrap.Checked
                 );
         }
 
@@ -102,8 +101,8 @@ namespace GUI
                 MessageBox.Show("A preset needs at least one layer.", "No layers", MessageBoxButtons.OK);
                 return;
             }
-            Dictionary<string, List<string>> presets = LoadPresets();
-            PresetSaver presetSaver = new PresetSaver(presets.Keys);
+            SortedDictionary<string, List<string>> presets = LoadPresets();
+            PresetSaver presetSaver = new PresetSaver(this);
             DialogResult result = presetSaver.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -121,8 +120,8 @@ namespace GUI
 
         private void load_Click(object sender, EventArgs e)
         {
-            Dictionary<string, List<string>> presets = LoadPresets();
-            PresetLoader presetLoader = new PresetLoader(new List<string>(presets.Keys));
+            SortedDictionary<string, List<string>> presets = LoadPresets();
+            PresetLoader presetLoader = new PresetLoader(this);
             DialogResult result = presetLoader.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -132,16 +131,16 @@ namespace GUI
             layers.ClearSelected();
         }
 
-        private Dictionary<string, List<string>> LoadPresets()
+        public SortedDictionary<string, List<string>> LoadPresets()
         {
             StreamReader reader = new StreamReader("Presets.txt");
-            Dictionary<string, List<string>> presets = new Dictionary<string, List<string>>();
+            SortedDictionary<string, List<string>> presets = new SortedDictionary<string, List<string>>();
             string name, layer;
             List<string> presetLayers;
             while ((name = reader.ReadLine()) != null)
             {
                 presetLayers = new List<string>();
-                while (!(layer = reader.ReadLine()).StartsWith("#"))
+                while ((layer = reader.ReadLine()) != "#")
                     presetLayers.Add(layer);
                 presets.Add(name.Remove(0, 1), presetLayers);
             }
@@ -149,7 +148,7 @@ namespace GUI
             return presets;
         }
 
-        private void SavePresets(Dictionary<string, List<string>> presets)
+        public void SavePresets(SortedDictionary<string, List<string>> presets)
         {
             StreamWriter writer = new StreamWriter("Presets.txt", false);
             foreach (KeyValuePair<string, List<string>> kvp in presets)
@@ -160,6 +159,38 @@ namespace GUI
                 writer.WriteLine("#");
             }
             writer.Close();
+        }
+
+        public void RestoreDefaultPresets()
+        {
+            StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("GUI.DefaultPresets.txt"));
+            SortedDictionary<string, List<string>> presets = LoadPresets();
+            string name, layer;
+            List<string> presetLayers;
+            while ((name = reader.ReadLine()) != null)
+            {
+                presetLayers = new List<string>();
+                while ((layer = reader.ReadLine()) != "#")
+                    presetLayers.Add(layer);
+                name = name.Remove(0, 1);
+                if (presets.ContainsKey(name))
+                    presets[name] = presetLayers;
+                else
+                    presets.Add(name, presetLayers);
+            }
+            reader.Close();
+            SavePresets(presets);
+        }
+
+        private void manage_Click(object sender, EventArgs e)
+        {
+            PresetManager manager = new PresetManager(this);
+            manager.ShowDialog();
+        }
+
+        private void wrap_CheckedChanged(object sender, EventArgs e)
+        {
+            channelWrap.Enabled = !channelWrap.Enabled;
         }
     }
 
