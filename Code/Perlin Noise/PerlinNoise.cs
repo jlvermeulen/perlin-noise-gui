@@ -11,9 +11,11 @@ namespace PerlinNoise
 {
     public class PerlinNoiseGenerator
     {
+        private static readonly PerlinNoiseGenerator generator = new PerlinNoiseGenerator();
+
         public static Bitmap GetImage(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
         {
-            PerlinNoiseGenerator generator = new PerlinNoiseGenerator(settings, resolution, threads, seed);
+            generator.GenerateImage(settings, resolution, threads, seed);
             Bitmap bmp = new Bitmap(resolution, resolution, PixelFormat.Format24bppRgb);
             byte[] colours = generator.texels;
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -39,6 +41,11 @@ namespace PerlinNoise
             return settings;
         }
 
+        public static int GetProgress()
+        {
+            return generator.progress;
+        }
+
         PerlinNoiseSettings settings;
         int resolution, threadCount, seed;
         byte[] texels;
@@ -46,9 +53,11 @@ namespace PerlinNoise
         int[] hashLookup;
         int[,] vectorIndices;
         int arraySize;
+        int progress;
 
-        private PerlinNoiseGenerator(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
+        private void GenerateImage(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
         {
+            this.progress = 0;
             texels = new byte[resolution * resolution * 3];
             this.resolution = resolution;
             this.threadCount = threads;
@@ -112,6 +121,7 @@ namespace PerlinNoise
         {
             ThreadParams tParams = (ThreadParams)data;
             for (float x = tParams.Start; x < arraySize; x += tParams.Step / tParams.Ratio)
+            {
                 for (float y = 0; y < arraySize; y += 1.0f / tParams.Ratio)
                 {
                     float value = 0;
@@ -135,12 +145,14 @@ namespace PerlinNoise
                     else if (settings.RangeHandling == RangeHandling.Shift)
                         value = (value + 1) / 2 * settings.Intensity;
 
-                    Color col = new Vector3(value).ToColor(settings.Highlight, settings.Shadow, settings.Wrap, settings.ChannelWrap);
+                    Color col = new Vector(value).ToColor(settings.Highlight, settings.Shadow, settings.Wrap, settings.ChannelWrap);
 
                     texels[pos] = (byte)(Math.Min(texels[pos] + col.B, 255));
                     texels[pos + 1] = (byte)(Math.Min(texels[pos + 1] + col.G, 255));
                     texels[pos + 2] = (byte)(Math.Min(texels[pos + 2] + col.R, 255));
                 }
+                Interlocked.Increment(ref progress);
+            }
         }
 
         private static float Omega(float u)
@@ -208,20 +220,13 @@ namespace PerlinNoise
         }
     }
 
-    struct Vector3
+    struct Vector
     {
-        public float X, Y, Z;
+        float val;
 
-        public Vector3(float val)
+        public Vector(float val)
         {
-            X = Y = Z = val;
-        }
-
-        public Vector3(float x, float y, float z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
+            this.val = val;
         }
 
         public Color ToColor(Color highlight, Color shadow, bool wrap, bool channelWrap)
@@ -229,9 +234,7 @@ namespace PerlinNoise
             float x, y, z;
             if (wrap)
             {
-                x = X;
-                y = Y;
-                z = Z;
+                x = y = z = val;
                 if (!channelWrap)
                 {
                     x %= 1;
@@ -240,11 +243,8 @@ namespace PerlinNoise
                 }
             }
             else
-            {
-                x = X < 0 ? 0 : X > 1 ? 1 : X;
-                y = Y < 0 ? 0 : Y > 1 ? 1 : Y;
-                z = Z < 0 ? 0 : Z > 1 ? 1 : Z;
-            }
+                x = y = z = val < 0 ? 0 : val > 1 ? 1 : val;
+
             x = x * highlight.R + (1 - x) * shadow.R;
             y = y * highlight.G + (1 - y) * shadow.G;
             z = z * highlight.B + (1 - z) * shadow.B;

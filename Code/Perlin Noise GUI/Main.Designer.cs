@@ -61,8 +61,9 @@
             this.load = new System.Windows.Forms.Button();
             this.clear = new System.Windows.Forms.Button();
             this.manage = new System.Windows.Forms.Button();
-            this.resolution = new GUI.ResolutionUpDown();
             this.channelWrap = new System.Windows.Forms.CheckBox();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.resolution = new GUI.ResolutionUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.levels)).BeginInit();
@@ -463,6 +464,22 @@
             this.manage.UseVisualStyleBackColor = true;
             this.manage.Click += new System.EventHandler(this.manage_Click);
             // 
+            // channelWrap
+            // 
+            this.channelWrap.AutoSize = true;
+            this.channelWrap.Enabled = false;
+            this.channelWrap.Location = new System.Drawing.Point(207, 117);
+            this.channelWrap.Name = "channelWrap";
+            this.channelWrap.Size = new System.Drawing.Size(83, 17);
+            this.channelWrap.TabIndex = 44;
+            this.channelWrap.Text = "Per channel";
+            this.channelWrap.UseVisualStyleBackColor = true;
+            // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            // 
             // resolution
             // 
             this.resolution.Location = new System.Drawing.Point(153, 447);
@@ -485,17 +502,6 @@
             0,
             0});
             this.resolution.Validated += new System.EventHandler(this.resolution_Validated);
-            // 
-            // channelWrap
-            // 
-            this.channelWrap.AutoSize = true;
-            this.channelWrap.Enabled = false;
-            this.channelWrap.Location = new System.Drawing.Point(207, 117);
-            this.channelWrap.Name = "channelWrap";
-            this.channelWrap.Size = new System.Drawing.Size(83, 17);
-            this.channelWrap.TabIndex = 44;
-            this.channelWrap.Text = "Per channel";
-            this.channelWrap.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -537,6 +543,7 @@
             this.Controls.Add(this.seedLabel);
             this.Controls.Add(this.resolutionLabel);
             this.Controls.Add(this.generate);
+            this.MaximizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Perlin Noise GUI";
@@ -594,6 +601,7 @@
         private System.Windows.Forms.Button clear;
         private System.Windows.Forms.Button manage;
         private System.Windows.Forms.CheckBox channelWrap;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
 

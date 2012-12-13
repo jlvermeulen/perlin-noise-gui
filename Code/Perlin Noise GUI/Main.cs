@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using PerlinNoise;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace GUI
 {
     public partial class Main : Form
     {
+        ImageViewer viewer;
+        DateTime start, end;
+        Image full, thumb;
+
         public Main()
         {
             InitializeComponent();
@@ -23,17 +30,32 @@ namespace GUI
                 MessageBox.Show("Please add a layer.");
                 return;
             }
-            PerlinNoiseSettings[] settings = new PerlinNoiseSettings[layers.Items.Count];
-            for(int i = 0; i < layers.Items.Count; i++)
-                settings[i] = PerlinNoiseGenerator.ParseSettings((string)layers.Items[i]);
-            DateTime start = DateTime.Now;
-            Image full = PerlinNoiseGenerator.GetImage(settings, (int)resolution.Value, (int)threads.Value, (int)seed.Value);
-            DateTime end = DateTime.Now;
-            full.Save("test.png");
-            Image thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
-            ImageViewer viewer = new ImageViewer(thumb);
+            viewer = new ImageViewer((int)resolution.Value * layers.Items.Count);
             viewer.Show();
-            MessageBox.Show("Generated image in " + (end - start).TotalSeconds + " seconds.");
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            PerlinNoiseSettings[] settings = new PerlinNoiseSettings[layers.Items.Count];
+            for (int i = 0; i < layers.Items.Count; i++)
+                settings[i] = PerlinNoiseGenerator.ParseSettings((string)layers.Items[i]);
+
+            start = DateTime.Now;
+            full = PerlinNoiseGenerator.GetImage(settings, (int)resolution.Value, (int)threads.Value, (int)seed.Value);
+            end = DateTime.Now;
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Directory.CreateDirectory("Images");
+            full.Save("Images\\" + end.GetTimestamp() + ".png");
+            thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
+            viewer.SetImage(full);
+            viewer.SetImageThumbnail(thumb);
+            viewer.HideProgressBar();
+            viewer.SetGenerationTime(end);
+            viewer.SetGenerationSpeed((end - start).TotalSeconds);
         }
 
         private void resolution_Validated(object sender, EventArgs e)
@@ -213,5 +235,21 @@ namespace GUI
             else
                 this.Value = val;
         }
+    }
+
+    public static class Extensions
+    {
+        public static string GetTimestamp(this DateTime value)
+        {
+            return value.ToString("yyyyMMdd_HHmmssfff");
+        }
+    }
+
+    class TaskParams
+    {
+        public PerlinNoiseSettings[] settings;
+        public int resolution;
+        public int threads;
+        public int seed;
     }
 }
