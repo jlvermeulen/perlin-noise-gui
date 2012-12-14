@@ -41,9 +41,10 @@ namespace PerlinNoise
             return settings;
         }
 
-        public static int GetProgress()
+        public static int Progress
         {
-            return generator.progress;
+            get { return generator.progress; }
+            set { generator.progress = value; }
         }
 
         PerlinNoiseSettings settings;
@@ -57,7 +58,6 @@ namespace PerlinNoise
 
         private void GenerateImage(PerlinNoiseSettings[] settings, int resolution, int threads, int seed)
         {
-            this.progress = 0;
             texels = new byte[resolution * resolution * 3];
             this.resolution = resolution;
             this.threadCount = threads;

@@ -32,6 +32,8 @@
             this.progress = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.speed = new System.Windows.Forms.Label();
+            this.save = new System.Windows.Forms.Button();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +47,7 @@
             // 
             // progress
             // 
-            this.progress.Location = new System.Drawing.Point(12, 530);
+            this.progress.Location = new System.Drawing.Point(12, 566);
             this.progress.Name = "progress";
             this.progress.Size = new System.Drawing.Size(512, 23);
             this.progress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -60,18 +62,30 @@
             // speed
             // 
             this.speed.AutoSize = true;
-            this.speed.Location = new System.Drawing.Point(9, 536);
+            this.speed.Location = new System.Drawing.Point(9, 539);
             this.speed.Name = "speed";
             this.speed.Size = new System.Drawing.Size(101, 13);
             this.speed.TabIndex = 2;
             this.speed.Text = "Image generated in ";
             this.speed.Visible = false;
             // 
+            // save
+            // 
+            this.save.Enabled = false;
+            this.save.Location = new System.Drawing.Point(444, 530);
+            this.save.Name = "save";
+            this.save.Size = new System.Drawing.Size(80, 30);
+            this.save.TabIndex = 3;
+            this.save.Text = "Save Image";
+            this.save.UseVisualStyleBackColor = true;
+            this.save.Click += new System.EventHandler(this.save_Click);
+            // 
             // ImageViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(536, 565);
+            this.ClientSize = new System.Drawing.Size(536, 601);
+            this.Controls.Add(this.save);
             this.Controls.Add(this.speed);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.progress);
@@ -91,5 +105,7 @@
         private System.Windows.Forms.ProgressBar progress;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.Label speed;
+        private System.Windows.Forms.Button save;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
     }
 }

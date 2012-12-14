@@ -21,6 +21,7 @@ namespace GUI
         {
             InitializeComponent();
             progress.Maximum = fieldCount;
+            PerlinNoiseGenerator.Progress = 0;
             backgroundWorker.RunWorkerAsync();
         }
 
@@ -32,12 +33,6 @@ namespace GUI
         public void SetImageThumbnail(Image image)
         {
             this.pictureBox.Image = image;
-        }
-
-        public void HideProgressBar()
-        {
-            this.progress.Enabled = false;
-            this.progress.Visible = false;
         }
 
         public void SetGenerationTime(DateTime dateTime)
@@ -52,6 +47,11 @@ namespace GUI
             this.speed.Visible = true;
         }
 
+        public void EnableSaveButton()
+        {
+            this.save.Enabled = true;
+        }
+
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (progress.Value < progress.Maximum)
@@ -63,8 +63,14 @@ namespace GUI
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progress.Step = PerlinNoiseGenerator.GetProgress() - progress.Value;
+            progress.Step = PerlinNoiseGenerator.Progress - progress.Value;
             progress.PerformStep();
+        }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            if (this.folderBrowser.ShowDialog() == DialogResult.OK)
+                image.Save(folderBrowser.SelectedPath + "\\" + generationTime.GetTimestamp() + ".png");
         }
     }
 }

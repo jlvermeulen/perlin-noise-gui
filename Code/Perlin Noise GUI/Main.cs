@@ -48,14 +48,12 @@ namespace GUI
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Directory.CreateDirectory("Images");
-            full.Save("Images\\" + end.GetTimestamp() + ".png");
             thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
             viewer.SetImage(full);
             viewer.SetImageThumbnail(thumb);
-            viewer.HideProgressBar();
             viewer.SetGenerationTime(end);
             viewer.SetGenerationSpeed((end - start).TotalSeconds);
+            viewer.EnableSaveButton();
         }
 
         private void resolution_Validated(object sender, EventArgs e)
