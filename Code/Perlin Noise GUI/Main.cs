@@ -7,8 +7,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using PerlinNoise;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace GUI
 {
