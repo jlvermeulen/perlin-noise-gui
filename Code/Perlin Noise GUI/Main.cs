@@ -28,7 +28,10 @@ namespace GUI
                 MessageBox.Show("Please add a layer.");
                 return;
             }
-            viewer = new ImageViewer((int)resolution.Value * layers.Items.Count);
+            int layerCount = 0;
+            foreach (string l in layers.Items)
+                layerCount += PerlinNoiseGenerator.ParseSettings(l).Levels;
+            viewer = new ImageViewer((int)resolution.Value * layerCount);
             viewer.Show();
             backgroundWorker.RunWorkerAsync();
         }
