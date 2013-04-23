@@ -453,6 +453,7 @@
             this.clear.TabIndex = 42;
             this.clear.Text = "Clear layers";
             this.clear.UseVisualStyleBackColor = true;
+            this.clear.Click += new System.EventHandler(this.clear_Click);
             // 
             // manage
             // 

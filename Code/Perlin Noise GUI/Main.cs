@@ -213,6 +213,11 @@ namespace GUI
         {
             channelWrap.Enabled = !channelWrap.Enabled;
         }
+
+        private void clear_Click(object sender, EventArgs e)
+        {
+            layers.Items.Clear();
+        }
     }
 
     public class ResolutionUpDown : NumericUpDown
