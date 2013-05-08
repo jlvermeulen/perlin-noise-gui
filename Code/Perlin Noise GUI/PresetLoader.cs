@@ -6,16 +6,13 @@ namespace GUI
 {
     public partial class PresetLoader : Form
     {
-        public PresetLoader(Main main)
+        internal PresetLoader(Main main)
         {
-            InitializeComponent();
-            presetNames.Items.AddRange(new List<string>(main.LoadPresets().Keys).ToArray());
+            this.InitializeComponent();
+            this.presetNames.Items.AddRange(new List<string>(main.LoadPresets().Keys).ToArray());
         }
 
-        public string Selection
-        {
-            get { return presetNames.Text; }
-        }
+        internal string Selection { get { return this.presetNames.Text; } }
 
         private void load_Click(object sender, EventArgs e)
         {
@@ -24,6 +21,7 @@ namespace GUI
                 MessageBox.Show("Please select a preset to load.");
                 return;
             }
+
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

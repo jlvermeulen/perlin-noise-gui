@@ -12,14 +12,11 @@ namespace GUI
 {
     public partial class Main : Form
     {
-        ImageViewer viewer;
-        DateTime start, end;
-        Image full, thumb;
+        private ImageViewer viewer;
+        private DateTime start, end;
+        private Image full, thumb;
 
-        public Main()
-        {
-            InitializeComponent();
-        }
+        internal Main() { this.InitializeComponent(); }
 
         private void generate_Click(object sender, EventArgs e)
         {
@@ -28,136 +25,149 @@ namespace GUI
                 MessageBox.Show("Please add a layer.");
                 return;
             }
+
             int layerCount = 0;
             foreach (string l in layers.Items)
-                layerCount += PerlinNoiseGenerator.ParseSettings(l).Levels;
-            viewer = new ImageViewer((int)resolution.Value * layerCount);
-            viewer.Show();
-            backgroundWorker.RunWorkerAsync();
+                layerCount += PerlinNoiseSettings.Parse(l).Levels;
+
+            this.viewer = new ImageViewer((int)this.resolution.Value * layerCount);
+            this.viewer.Show();
+            this.backgroundWorker.RunWorkerAsync();
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            PerlinNoiseSettings[] settings = new PerlinNoiseSettings[layers.Items.Count];
-            for (int i = 0; i < layers.Items.Count; i++)
-                settings[i] = PerlinNoiseGenerator.ParseSettings((string)layers.Items[i]);
+            PerlinNoiseSettings[] settings = new PerlinNoiseSettings[this.layers.Items.Count];
+            for (int i = 0; i < this.layers.Items.Count; i++)
+                settings[i] = PerlinNoiseSettings.Parse((string)this.layers.Items[i]);
 
-            start = DateTime.Now;
-            full = PerlinNoiseGenerator.GetImage(settings, (int)resolution.Value, (int)threads.Value, (int)seed.Value);
-            end = DateTime.Now;
+            this.start = DateTime.Now;
+            this.full = PerlinNoiseGenerator.GetImage(settings, (int)this.resolution.Value, (int)this.threads.Value, (int)this.seed.Value);
+            this.end = DateTime.Now;
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            thumb = full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
-            viewer.SetImage(full);
-            viewer.SetImageThumbnail(thumb);
-            viewer.SetGenerationTime(end);
-            viewer.SetGenerationSpeed((end - start).TotalSeconds);
-            viewer.EnableSaveButton();
+            this.thumb = this.full.GetThumbnailImage(512, 512, null, IntPtr.Zero);
+            this.viewer.SetImage(this.full);
+            this.viewer.SetImageThumbnail(this.thumb);
+
+            this.viewer.SetGenerationTime(this.end);
+            this.viewer.SetGenerationSpeed((this.end - this.start).TotalSeconds);
+
+            this.viewer.EnableSaveButton();
         }
 
         private void resolution_Validated(object sender, EventArgs e)
         {
-            double exp = Math.Log((double)resolution.Value, 2);
+            double exp = Math.Log((double)this.resolution.Value, 2);
+
             int exp1 = (int)Math.Floor(exp);
             int exp2 = (int)Math.Ceiling(exp);
+
             int val1 = (int)Math.Pow(2, exp1);
             int val2 = (int)Math.Pow(2, exp2);
-            decimal diff1 = Math.Abs(resolution.Value - val1);
-            decimal diff2 = Math.Abs(resolution.Value - val2);
+
+            decimal diff1 = Math.Abs(this.resolution.Value - val1);
+            decimal diff2 = Math.Abs(this.resolution.Value - val2);
+
             if (diff1 <= diff2)
-                resolution.Value = val1;
+                this.resolution.Value = val1;
             else
-                resolution.Value = val2;
+                this.resolution.Value = val2;
         }
 
         private void add_Click(object sender, EventArgs e)
         {
-            layers.Items.Add
+            this.layers.Items.Add
                 (
-                    intensity.Value.ToString("0.00", CultureInfo.CreateSpecificCulture("en-GB")) + ", " +
-                    levels.Value + ", " +
-                    offset.Value + ", " +
-                    rangeHandling.Text + ", " +
-                    highlightRed.Value + ", " +
-                    highlightGreen.Value + ", " +
-                    highlightBlue.Value + ", " +
-                    shadowRed.Value + ", " +
-                    shadowGreen.Value + ", " +
-                    shadowBlue.Value + ", " +
-                    wrap.Checked + ", " +
-                    channelWrap.Checked
+                    this.intensity.Value.ToString("0.00", CultureInfo.CreateSpecificCulture("en-GB")) + ", " +
+                    this.levels.Value + ", " +
+                    this.offset.Value + ", " +
+                    this.rangeHandling.Text + ", " +
+                    this.highlightRed.Value + ", " +
+                    this.highlightGreen.Value + ", " +
+                    this.highlightBlue.Value + ", " +
+                    this.shadowRed.Value + ", " +
+                    this.shadowGreen.Value + ", " +
+                    this.shadowBlue.Value + ", " +
+                    this.wrap.Checked + ", " +
+                    this.channelWrap.Checked
                 );
         }
 
         private void delete_Click(object sender, EventArgs e)
         {
-            ListBox.SelectedIndexCollection selection = layers.SelectedIndices;
+            ListBox.SelectedIndexCollection selection = this.layers.SelectedIndices;
             List<int> indices = new List<int>();
             foreach (int s in selection)
                 indices.Add(s);
             indices.Sort();
 
             for (int i = indices.Count - 1; i >= 0; i--)
-                layers.Items.RemoveAt(indices[i]);
+                this.layers.Items.RemoveAt(indices[i]);
         }
 
         private void offset_ValueChanged(object sender, EventArgs e)
         {
-            if (offset.Value + levels.Value > 11)
-                offset.Value--;
+            if (this.offset.Value + this.levels.Value > 11)
+                this.offset.Value--;
         }
 
         private void levels_ValueChanged(object sender, EventArgs e)
         {
-            if (offset.Value + levels.Value > 11)
-                levels.Value--;
+            if (this.offset.Value + this.levels.Value > 11)
+                this.levels.Value--;
         }
 
         private void save_Click(object sender, EventArgs e)
         {
-            if (layers.Items.Count == 0)
+            if (this.layers.Items.Count == 0)
             {
                 MessageBox.Show("A preset needs at least one layer.", "No layers", MessageBoxButtons.OK);
                 return;
             }
-            SortedDictionary<string, List<string>> presets = LoadPresets();
+
+            SortedDictionary<string, List<string>> presets = this.LoadPresets();
             PresetSaver presetSaver = new PresetSaver(this);
-            DialogResult result = presetSaver.ShowDialog();
-            if (result == DialogResult.OK)
+
+            if (presetSaver.ShowDialog() == DialogResult.OK)
             {
-                if (presets.ContainsKey(presetSaver.PresetName))
-                    presets[presetSaver.PresetName] = null;
-                else
-                    presets.Add(presetSaver.PresetName, null);
+                presets[presetSaver.PresetName] = null;
+
                 List<string> presetLayers = new List<string>();
                 foreach (object o in layers.Items)
                     presetLayers.Add((string)o);
+
                 presets[presetSaver.PresetName] = presetLayers;
-                SavePresets(presets);
+                this.SavePresets(presets);
             }
         }
 
         private void load_Click(object sender, EventArgs e)
         {
-            SortedDictionary<string, List<string>> presets = LoadPresets();
+            SortedDictionary<string, List<string>> presets = this.LoadPresets();
             PresetLoader presetLoader = new PresetLoader(this);
-            DialogResult result = presetLoader.ShowDialog();
-            if (result == DialogResult.OK)
+
+            if (presetLoader.ShowDialog() == DialogResult.OK)
             {
-                layers.Items.Clear();
-                layers.Items.AddRange(presets[presetLoader.Selection].ToArray());
+                this.layers.Items.Clear();
+                this.layers.Items.AddRange(presets[presetLoader.Selection].ToArray());
             }
-            layers.ClearSelected();
+
+            this.layers.ClearSelected();
         }
 
-        public SortedDictionary<string, List<string>> LoadPresets()
+        internal SortedDictionary<string, List<string>> LoadPresets()
         {
+            if (!File.Exists("Presets.txt"))
+                File.Create("Presets.txt").Close();
+
             StreamReader reader = new StreamReader("Presets.txt");
             SortedDictionary<string, List<string>> presets = new SortedDictionary<string, List<string>>();
             string name, layer;
             List<string> presetLayers;
+
             while ((name = reader.ReadLine()) != null)
             {
                 presetLayers = new List<string>();
@@ -165,11 +175,12 @@ namespace GUI
                     presetLayers.Add(layer);
                 presets.Add(name.Remove(0, 1), presetLayers);
             }
+
             reader.Close();
             return presets;
         }
 
-        public void SavePresets(SortedDictionary<string, List<string>> presets)
+        internal void SavePresets(SortedDictionary<string, List<string>> presets)
         {
             StreamWriter writer = new StreamWriter("Presets.txt", false);
             foreach (KeyValuePair<string, List<string>> kvp in presets)
@@ -182,42 +193,31 @@ namespace GUI
             writer.Close();
         }
 
-        public void RestoreDefaultPresets()
+        internal void RestoreDefaultPresets()
         {
             StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("GUI.DefaultPresets.txt"));
-            SortedDictionary<string, List<string>> presets = LoadPresets();
+            SortedDictionary<string, List<string>> presets = this.LoadPresets();
             string name, layer;
             List<string> presetLayers;
+
             while ((name = reader.ReadLine()) != null)
             {
                 presetLayers = new List<string>();
                 while ((layer = reader.ReadLine()) != "#")
                     presetLayers.Add(layer);
                 name = name.Remove(0, 1);
-                if (presets.ContainsKey(name))
-                    presets[name] = presetLayers;
-                else
-                    presets.Add(name, presetLayers);
+                presets[name] = presetLayers;
             }
+
             reader.Close();
-            SavePresets(presets);
+            this.SavePresets(presets);
         }
 
-        private void manage_Click(object sender, EventArgs e)
-        {
-            PresetManager manager = new PresetManager(this);
-            manager.ShowDialog();
-        }
+        private void manage_Click(object sender, EventArgs e) { new PresetManager(this).ShowDialog(); }
 
-        private void wrap_CheckedChanged(object sender, EventArgs e)
-        {
-            channelWrap.Enabled = !channelWrap.Enabled;
-        }
+        private void wrap_CheckedChanged(object sender, EventArgs e) { this.channelWrap.Enabled = !this.channelWrap.Enabled; }
 
-        private void clear_Click(object sender, EventArgs e)
-        {
-            layers.Items.Clear();
-        }
+        private void clear_Click(object sender, EventArgs e) { this.layers.Items.Clear(); }
     }
 
     public class ResolutionUpDown : NumericUpDown
@@ -241,19 +241,5 @@ namespace GUI
         }
     }
 
-    public static class Extensions
-    {
-        public static string GetTimestamp(this DateTime value)
-        {
-            return value.ToString("yyyyMMdd_HHmmssfff");
-        }
-    }
-
-    class TaskParams
-    {
-        public PerlinNoiseSettings[] settings;
-        public int resolution;
-        public int threads;
-        public int seed;
-    }
+    public static class Extensions { public static string GetTimestamp(this DateTime value) { return value.ToString("yyyyMMdd_HHmmssfff"); } }
 }

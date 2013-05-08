@@ -32,10 +32,10 @@ Global
 		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|x86.ActiveCfg = Release|Any CPU
-		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|x86.Build.0 = Release|Any CPU
+		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|x86.ActiveCfg = Release|x86
+		{33D1B756-D4AF-4BF3-B650-EAFD64C071DF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,44 +9,32 @@ namespace GUI
 {
     public partial class ImageViewer : Form
     {
-        Image image;
-        DateTime generationTime;
-        double generationSpeed;
+        private Image image;
+        private DateTime generationTime;
+        private double generationSpeed;
 
-        public ImageViewer(int fieldCount)
+        internal ImageViewer(int fieldCount)
         {
-            InitializeComponent();
-            progress.Maximum = fieldCount;
+            this.InitializeComponent();
+            this.progress.Maximum = fieldCount;
             PerlinNoiseGenerator.Progress = 0;
-            backgroundWorker.RunWorkerAsync();
+            this.backgroundWorker.RunWorkerAsync();
         }
 
-        public void SetImage(Image image)
-        {
-            this.image = image;
-        }
+        internal void SetImage(Image image) { this.image = image; }
 
-        public void SetImageThumbnail(Image image)
-        {
-            this.pictureBox.Image = image;
-        }
+        internal void SetImageThumbnail(Image image) { this.pictureBox.Image = image; }
 
-        public void SetGenerationTime(DateTime dateTime)
-        {
-            this.generationTime = dateTime;
-        }
+        internal void SetGenerationTime(DateTime dateTime) { this.generationTime = dateTime; }
 
-        public void SetGenerationSpeed(double speed)
+        internal void SetGenerationSpeed(double speed)
         {
             this.generationSpeed = speed;
             this.speed.Text += speed.ToString("0.000") + " sec";
             this.speed.Visible = true;
         }
 
-        public void EnableSaveButton()
-        {
-            this.save.Enabled = true;
-        }
+        internal void EnableSaveButton() { this.save.Enabled = true; }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -59,14 +47,20 @@ namespace GUI
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progress.Step = PerlinNoiseGenerator.Progress - progress.Value;
-            progress.PerformStep();
+            this.progress.Step = PerlinNoiseGenerator.Progress - this.progress.Value;
+            this.progress.PerformStep();
         }
 
         private void save_Click(object sender, EventArgs e)
         {
             if (this.folderBrowser.ShowDialog() == DialogResult.OK)
-                image.Save(folderBrowser.SelectedPath + "\\" + generationTime.GetTimestamp() + ".png");
+                this.image.Save(this.folderBrowser.SelectedPath + "\\" + this.generationTime.GetTimestamp() + ".png");
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.backgroundWorker.CancelAsync();
+            base.OnClosing(e);
         }
     }
 }

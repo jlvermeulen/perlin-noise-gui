@@ -31,6 +31,7 @@
             this.presetNames = new System.Windows.Forms.CheckedListBox();
             this.delete = new System.Windows.Forms.Button();
             this.restore = new System.Windows.Forms.Button();
+            this.close = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // presetNames
@@ -63,11 +64,22 @@
             this.restore.UseVisualStyleBackColor = true;
             this.restore.Click += new System.EventHandler(this.restore_Click);
             // 
+            // close
+            // 
+            this.close.Location = new System.Drawing.Point(286, 76);
+            this.close.Name = "close";
+            this.close.Size = new System.Drawing.Size(100, 26);
+            this.close.TabIndex = 3;
+            this.close.Text = "Close";
+            this.close.UseVisualStyleBackColor = true;
+            this.close.Click += new System.EventHandler(this.close_Click);
+            // 
             // PresetManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(398, 268);
+            this.Controls.Add(this.close);
             this.Controls.Add(this.restore);
             this.Controls.Add(this.delete);
             this.Controls.Add(this.presetNames);
@@ -83,5 +95,6 @@
         private System.Windows.Forms.CheckedListBox presetNames;
         private System.Windows.Forms.Button delete;
         private System.Windows.Forms.Button restore;
+        private System.Windows.Forms.Button close;
     }
 }

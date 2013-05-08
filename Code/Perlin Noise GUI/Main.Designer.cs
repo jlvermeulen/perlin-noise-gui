@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.generate = new System.Windows.Forms.Button();
             this.resolutionLabel = new System.Windows.Forms.Label();
             this.seedLabel = new System.Windows.Forms.Label();
@@ -63,6 +65,8 @@
             this.manage = new System.Windows.Forms.Button();
             this.channelWrap = new System.Windows.Forms.CheckBox();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.info = new System.Windows.Forms.Label();
             this.resolution = new GUI.ResolutionUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.offset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threads)).BeginInit();
@@ -80,18 +84,19 @@
             // 
             // generate
             // 
-            this.generate.Location = new System.Drawing.Point(386, 473);
+            this.generate.Location = new System.Drawing.Point(386, 426);
             this.generate.Name = "generate";
             this.generate.Size = new System.Drawing.Size(91, 46);
-            this.generate.TabIndex = 0;
+            this.generate.TabIndex = 23;
             this.generate.Text = "Generate";
+            this.toolTip.SetToolTip(this.generate, "Generate the image.");
             this.generate.UseVisualStyleBackColor = true;
             this.generate.Click += new System.EventHandler(this.generate_Click);
             // 
             // resolutionLabel
             // 
             this.resolutionLabel.AutoSize = true;
-            this.resolutionLabel.Location = new System.Drawing.Point(12, 449);
+            this.resolutionLabel.Location = new System.Drawing.Point(12, 402);
             this.resolutionLabel.Name = "resolutionLabel";
             this.resolutionLabel.Size = new System.Drawing.Size(57, 13);
             this.resolutionLabel.TabIndex = 2;
@@ -100,7 +105,7 @@
             // seedLabel
             // 
             this.seedLabel.AutoSize = true;
-            this.seedLabel.Location = new System.Drawing.Point(12, 501);
+            this.seedLabel.Location = new System.Drawing.Point(12, 454);
             this.seedLabel.Name = "seedLabel";
             this.seedLabel.Size = new System.Drawing.Size(32, 13);
             this.seedLabel.TabIndex = 4;
@@ -163,7 +168,7 @@
             // threadsLabel
             // 
             this.threadsLabel.AutoSize = true;
-            this.threadsLabel.Location = new System.Drawing.Point(12, 475);
+            this.threadsLabel.Location = new System.Drawing.Point(12, 428);
             this.threadsLabel.Name = "threadsLabel";
             this.threadsLabel.Size = new System.Drawing.Size(46, 13);
             this.threadsLabel.TabIndex = 18;
@@ -179,12 +184,13 @@
             0});
             this.offset.Name = "offset";
             this.offset.Size = new System.Drawing.Size(156, 20);
-            this.offset.TabIndex = 19;
+            this.offset.TabIndex = 3;
+            this.toolTip.SetToolTip(this.offset, "The base size of the noise array.");
             this.offset.ValueChanged += new System.EventHandler(this.offset_ValueChanged);
             // 
             // threads
             // 
-            this.threads.Location = new System.Drawing.Point(153, 473);
+            this.threads.Location = new System.Drawing.Point(153, 426);
             this.threads.Maximum = new decimal(new int[] {
             50,
             0,
@@ -196,8 +202,9 @@
             0,
             0});
             this.threads.Name = "threads";
-            this.threads.Size = new System.Drawing.Size(120, 20);
-            this.threads.TabIndex = 20;
+            this.threads.Size = new System.Drawing.Size(156, 20);
+            this.threads.TabIndex = 21;
+            this.toolTip.SetToolTip(this.threads, "The number of threads to use when generating the image.");
             this.threads.Value = new decimal(new int[] {
             1,
             0,
@@ -219,7 +226,8 @@
             0});
             this.levels.Name = "levels";
             this.levels.Size = new System.Drawing.Size(156, 20);
-            this.levels.TabIndex = 21;
+            this.levels.TabIndex = 2;
+            this.toolTip.SetToolTip(this.levels, "The levels of turbulence to create.");
             this.levels.Value = new decimal(new int[] {
             1,
             0,
@@ -238,7 +246,8 @@
             this.intensity.Location = new System.Drawing.Point(153, 12);
             this.intensity.Name = "intensity";
             this.intensity.Size = new System.Drawing.Size(156, 20);
-            this.intensity.TabIndex = 22;
+            this.intensity.TabIndex = 1;
+            this.toolTip.SetToolTip(this.intensity, "The intensity of this layer.");
             this.intensity.Value = new decimal(new int[] {
             1,
             0,
@@ -252,24 +261,28 @@
             "Absolute",
             "Clamp",
             "InverseAbsolute",
+            "None",
             "Shift"});
             this.rangeHandling.Location = new System.Drawing.Point(153, 90);
             this.rangeHandling.Name = "rangeHandling";
             this.rangeHandling.Size = new System.Drawing.Size(156, 21);
-            this.rangeHandling.TabIndex = 23;
+            this.rangeHandling.TabIndex = 4;
             this.rangeHandling.Text = "Shift";
+            this.toolTip.SetToolTip(this.rangeHandling, resources.GetString("rangeHandling.ToolTip"));
             // 
             // seed
             // 
-            this.seed.Location = new System.Drawing.Point(153, 499);
+            this.seed.Location = new System.Drawing.Point(153, 452);
             this.seed.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
             this.seed.Name = "seed";
-            this.seed.Size = new System.Drawing.Size(120, 20);
-            this.seed.TabIndex = 24;
+            this.seed.Size = new System.Drawing.Size(156, 20);
+            this.seed.TabIndex = 22;
+            this.toolTip.SetToolTip(this.seed, "The seed to use for generating the image. If the value is zero, a random seed wil" +
+        "l be used.");
             // 
             // shadowRed
             // 
@@ -281,7 +294,8 @@
             0});
             this.shadowRed.Name = "shadowRed";
             this.shadowRed.Size = new System.Drawing.Size(48, 20);
-            this.shadowRed.TabIndex = 25;
+            this.shadowRed.TabIndex = 7;
+            this.toolTip.SetToolTip(this.shadowRed, "The red component of the base colour.");
             // 
             // shadowBlue
             // 
@@ -293,7 +307,8 @@
             0});
             this.shadowBlue.Name = "shadowBlue";
             this.shadowBlue.Size = new System.Drawing.Size(48, 20);
-            this.shadowBlue.TabIndex = 26;
+            this.shadowBlue.TabIndex = 9;
+            this.toolTip.SetToolTip(this.shadowBlue, "The blue component of the base colour.");
             // 
             // shadowGreen
             // 
@@ -305,7 +320,8 @@
             0});
             this.shadowGreen.Name = "shadowGreen";
             this.shadowGreen.Size = new System.Drawing.Size(48, 20);
-            this.shadowGreen.TabIndex = 27;
+            this.shadowGreen.TabIndex = 8;
+            this.toolTip.SetToolTip(this.shadowGreen, "The green component of the base colour.");
             // 
             // redLabel
             // 
@@ -344,7 +360,8 @@
             0});
             this.highlightGreen.Name = "highlightGreen";
             this.highlightGreen.Size = new System.Drawing.Size(48, 20);
-            this.highlightGreen.TabIndex = 33;
+            this.highlightGreen.TabIndex = 11;
+            this.toolTip.SetToolTip(this.highlightGreen, "The green component of the highlight colour.");
             this.highlightGreen.Value = new decimal(new int[] {
             255,
             0,
@@ -361,7 +378,8 @@
             0});
             this.highlightBlue.Name = "highlightBlue";
             this.highlightBlue.Size = new System.Drawing.Size(48, 20);
-            this.highlightBlue.TabIndex = 32;
+            this.highlightBlue.TabIndex = 12;
+            this.toolTip.SetToolTip(this.highlightBlue, "The blue component of the highlight colour.");
             this.highlightBlue.Value = new decimal(new int[] {
             255,
             0,
@@ -378,7 +396,8 @@
             0});
             this.highlightRed.Name = "highlightRed";
             this.highlightRed.Size = new System.Drawing.Size(48, 20);
-            this.highlightRed.TabIndex = 31;
+            this.highlightRed.TabIndex = 10;
+            this.toolTip.SetToolTip(this.highlightRed, "The red component of the highlight colour.");
             this.highlightRed.Value = new decimal(new int[] {
             255,
             0,
@@ -391,77 +410,85 @@
             this.wrap.Location = new System.Drawing.Point(153, 117);
             this.wrap.Name = "wrap";
             this.wrap.Size = new System.Drawing.Size(52, 17);
-            this.wrap.TabIndex = 36;
+            this.wrap.TabIndex = 5;
             this.wrap.Text = "Wrap";
+            this.toolTip.SetToolTip(this.wrap, "Wrap values that exceed 1 back to 0.");
             this.wrap.UseVisualStyleBackColor = true;
             this.wrap.CheckedChanged += new System.EventHandler(this.wrap_CheckedChanged);
             // 
             // layers
             // 
             this.layers.FormattingEnabled = true;
-            this.layers.Location = new System.Drawing.Point(12, 255);
+            this.layers.Location = new System.Drawing.Point(12, 208);
             this.layers.Name = "layers";
             this.layers.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.layers.Size = new System.Drawing.Size(368, 186);
-            this.layers.TabIndex = 37;
+            this.layers.TabIndex = 13;
+            this.toolTip.SetToolTip(this.layers, "The layers that will be used for creating the current texture.");
             // 
             // add
             // 
-            this.add.Location = new System.Drawing.Point(386, 255);
+            this.add.Location = new System.Drawing.Point(386, 208);
             this.add.Name = "add";
             this.add.Size = new System.Drawing.Size(91, 26);
-            this.add.TabIndex = 38;
+            this.add.TabIndex = 14;
             this.add.Text = "Add layer";
+            this.toolTip.SetToolTip(this.add, "Add the curent settings as a layer.");
             this.add.UseVisualStyleBackColor = true;
             this.add.Click += new System.EventHandler(this.add_Click);
             // 
             // delete
             // 
-            this.delete.Location = new System.Drawing.Point(386, 287);
+            this.delete.Location = new System.Drawing.Point(386, 240);
             this.delete.Name = "delete";
             this.delete.Size = new System.Drawing.Size(91, 26);
-            this.delete.TabIndex = 39;
+            this.delete.TabIndex = 15;
             this.delete.Text = "Delete layer";
+            this.toolTip.SetToolTip(this.delete, "Delete selected layers.");
             this.delete.UseVisualStyleBackColor = true;
             this.delete.Click += new System.EventHandler(this.delete_Click);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(386, 351);
+            this.save.Location = new System.Drawing.Point(386, 304);
             this.save.Name = "save";
             this.save.Size = new System.Drawing.Size(91, 26);
-            this.save.TabIndex = 40;
+            this.save.TabIndex = 17;
             this.save.Text = "Save preset";
+            this.toolTip.SetToolTip(this.save, "Save the current set of layers as a preset.");
             this.save.UseVisualStyleBackColor = true;
             this.save.Click += new System.EventHandler(this.save_Click);
             // 
             // load
             // 
-            this.load.Location = new System.Drawing.Point(386, 383);
+            this.load.Location = new System.Drawing.Point(386, 336);
             this.load.Name = "load";
             this.load.Size = new System.Drawing.Size(91, 26);
-            this.load.TabIndex = 41;
+            this.load.TabIndex = 18;
             this.load.Text = "Load preset";
+            this.toolTip.SetToolTip(this.load, "Load a set of layers from a preset.");
             this.load.UseVisualStyleBackColor = true;
             this.load.Click += new System.EventHandler(this.load_Click);
             // 
             // clear
             // 
-            this.clear.Location = new System.Drawing.Point(386, 319);
+            this.clear.Location = new System.Drawing.Point(386, 272);
             this.clear.Name = "clear";
             this.clear.Size = new System.Drawing.Size(91, 26);
-            this.clear.TabIndex = 42;
+            this.clear.TabIndex = 16;
             this.clear.Text = "Clear layers";
+            this.toolTip.SetToolTip(this.clear, "Delete all layers.");
             this.clear.UseVisualStyleBackColor = true;
             this.clear.Click += new System.EventHandler(this.clear_Click);
             // 
             // manage
             // 
-            this.manage.Location = new System.Drawing.Point(386, 415);
+            this.manage.Location = new System.Drawing.Point(386, 368);
             this.manage.Name = "manage";
             this.manage.Size = new System.Drawing.Size(91, 26);
-            this.manage.TabIndex = 43;
+            this.manage.TabIndex = 19;
             this.manage.Text = "Manage presets";
+            this.toolTip.SetToolTip(this.manage, "Delete presets or restore the default presets.");
             this.manage.UseVisualStyleBackColor = true;
             this.manage.Click += new System.EventHandler(this.manage_Click);
             // 
@@ -472,8 +499,9 @@
             this.channelWrap.Location = new System.Drawing.Point(207, 117);
             this.channelWrap.Name = "channelWrap";
             this.channelWrap.Size = new System.Drawing.Size(83, 17);
-            this.channelWrap.TabIndex = 44;
+            this.channelWrap.TabIndex = 6;
             this.channelWrap.Text = "Per channel";
+            this.toolTip.SetToolTip(this.channelWrap, "Allow channels to wrap individually.");
             this.channelWrap.UseVisualStyleBackColor = true;
             // 
             // backgroundWorker
@@ -481,9 +509,29 @@
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
+            // toolTip
+            // 
+            this.toolTip.AutoPopDelay = 30000;
+            this.toolTip.InitialDelay = 1000;
+            this.toolTip.ReshowDelay = 500;
+            // 
+            // info
+            // 
+            this.info.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.info.AutoSize = true;
+            this.info.Enabled = false;
+            this.info.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.info.Location = new System.Drawing.Point(343, 53);
+            this.info.Name = "info";
+            this.info.Size = new System.Drawing.Size(121, 78);
+            this.info.TabIndex = 31;
+            this.info.Text = "Perlin Noise GUI\r\nby Jordi Vermeulen\r\nCopyright 2013\r\n\r\nGUI v1.0\r\nPerlin Noise Li" +
+    "brary v1.0";
+            this.info.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // resolution
             // 
-            this.resolution.Location = new System.Drawing.Point(153, 447);
+            this.resolution.Location = new System.Drawing.Point(153, 400);
             this.resolution.Maximum = new decimal(new int[] {
             8192,
             0,
@@ -495,8 +543,9 @@
             0,
             0});
             this.resolution.Name = "resolution";
-            this.resolution.Size = new System.Drawing.Size(120, 20);
-            this.resolution.TabIndex = 35;
+            this.resolution.Size = new System.Drawing.Size(156, 20);
+            this.resolution.TabIndex = 20;
+            this.toolTip.SetToolTip(this.resolution, "The resolution of the texture.");
             this.resolution.Value = new decimal(new int[] {
             512,
             0,
@@ -508,7 +557,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(489, 531);
+            this.ClientSize = new System.Drawing.Size(489, 484);
+            this.Controls.Add(this.info);
             this.Controls.Add(this.channelWrap);
             this.Controls.Add(this.manage);
             this.Controls.Add(this.clear);
@@ -544,6 +594,7 @@
             this.Controls.Add(this.seedLabel);
             this.Controls.Add(this.resolutionLabel);
             this.Controls.Add(this.generate);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -603,6 +654,8 @@
         private System.Windows.Forms.Button manage;
         private System.Windows.Forms.CheckBox channelWrap;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Label info;
     }
 }
 
